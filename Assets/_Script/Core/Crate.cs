@@ -4,38 +4,36 @@ using UnityEngine;
 namespace qiekn.core {
     public class Crate : MonoBehaviour, IMoveable, ITemperature {
         [SerializeField] int val; // temperature
-        [SerializeField] SpriteRenderer background;
-        [SerializeField] SpriteRenderer border;
+        public Vector2Int position;
+        public List<Vector2Int> shape;
 
-        [SerializeField] List<Vector3> positions;
+        [SerializeField] SpriteRenderer background;
+        // [SerializeField] SpriteRenderer border;
+
+        GridManager gm;
 
         void Start() {
+            gm = FindFirstObjectByType<GridManager>();
+            gm.RegisterCrate(this);
             UpdateColor();
-        }
-
-        void Update() {
-        }
-
-        void UpdateColor() {
-            if (val > 0) {
-                background.color = Defs.RED;
-                border.color = Defs.DARKRED;
-            } else if (val < 0) {
-                background.color = Defs.BLUE;
-                border.color = Defs.DARKBLUE;
-            } else if (val == 0) {
-                background.color = Defs.GRAY;
-                border.color = Defs.DARKGRAY;
-            }
         }
 
         /*─────────────────────────────────────┐
         │               Movable                │
         └──────────────────────────────────────*/
 
-        public bool BePushed(Vector2Int dir) {
-            var dests = Utils.CalculateDests(positions, dir);
-            return true;
+        public bool CanMove(Vector2Int direction) {
+            var dest = position + direction;
+            return gm.CanMoveTo(dest, this);
+        }
+
+        public void Move(Vector2Int direction) {
+            if (CanMove(direction)) {
+                gm.UnRegisterCrate(this);
+                position += direction;
+                gm.RegisterCrate(this);
+                transform.position = new Vector3(position.x, position.y, 0);
+            }
         }
 
         /*─────────────────────────────────────┐
@@ -50,6 +48,19 @@ namespace qiekn.core {
             if (val_ != val) {
                 val = val_;
                 UpdateColor();
+            }
+        }
+
+        void UpdateColor() {
+            if (val > 0) {
+                background.color = Defs.RED;
+                // border.color = Defs.DARKRED;
+            } else if (val < 0) {
+                background.color = Defs.BLUE;
+                // border.color = Defs.DARKBLUE;
+            } else if (val == 0) {
+                background.color = Defs.GRAY;
+                // border.color = Defs.DARKGRAY;
             }
         }
 

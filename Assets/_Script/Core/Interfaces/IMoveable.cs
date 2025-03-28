@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace qiekn.core {
     public interface IMoveable {
-        bool BePushed(Vector2Int dir);
+        bool CanMove(Vector2Int direction);
+        void Move(Vector2Int direction);
     }
 }
