@@ -7,9 +7,11 @@ namespace qiekn.core {
         [SerializeField] SpriteRenderer decorationSpriteRenderer;
 
         LayerMask groundLayerMask;
+        LayerMask crateLayerMask;
 
         void Start() {
             groundLayerMask = LayerMask.GetMask("Ground");
+            crateLayerMask = LayerMask.GetMask("Crate");
         }
 
         void Update() {
@@ -19,35 +21,35 @@ namespace qiekn.core {
 
         void UpdatePlayerInput() {
             if (Input.GetKeyDown(KeyCode.W)) {
-                Move(Vector2Int.up);
+                TryMove(Vector2Int.up);
             } else if (Input.GetKeyDown(KeyCode.S)) {
-                Move(Vector2Int.down);
+                TryMove(Vector2Int.down);
             } else if (Input.GetKeyDown(KeyCode.A)) {
-                Move(Vector2Int.left);
+                TryMove(Vector2Int.left);
                 Turn(true);
             } else if (Input.GetKeyDown(KeyCode.D)) {
-                Move(Vector2Int.right);
+                TryMove(Vector2Int.right);
                 Turn(false);
             }
         }
 
-        void Move(Vector2Int dir) {
-            var step = Defs.Unit;
-            var pos = transform.position;
-            var dest = new Vector3(pos.x + dir.x * step, pos.y + dir.y * step, pos.z);
-            if (CanMove(dest)) {
-                transform.position = dest;
+        void TryMove(Vector2Int dir) {
+            var dest = Utils.CalculateDest(transform.position, dir);
+            var crate = Utils.GetCrate(dest, crateLayerMask);
+
+            // hit crate and crate can be pushed
+            if (crate != null && crate.GetComponent<Crate>().BePushed(dir)) {
+                Move(dest);
+            }
+
+            // no crate and dest is ground
+            else if (Utils.IsGround(dest, groundLayerMask)) {
+                Move(dest);
             }
         }
 
-        bool CanMove(Vector2 dest) {
-            // is ground?
-            // is dest reachable?
-            var hit = Physics2D.OverlapPoint(dest, groundLayerMask);
-            if (hit != null) {
-                return true;
-            }
-            return false;
+        void Move(Vector3 dest) {
+            transform.position = dest;
         }
 
         void Turn(bool left) {
