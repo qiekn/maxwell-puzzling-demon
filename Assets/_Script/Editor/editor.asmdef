@@ -1,0 +1,16 @@
+{
+    "name": "editor",
+    "rootNamespace": "qiekn.editor",
+    "references": [
+        "GUID:8dceb6d638bcc48409c6e91b4f3b5fdc"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
