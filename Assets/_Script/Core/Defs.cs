@@ -1,9 +1,18 @@
 using UnityEngine;
 
 namespace qiekn.core {
+
+    public enum Temperature {
+        Cold = -10,
+        Neutral = 0,
+        Magic = 1, // green temperature
+        Hot = 10,
+    }
+
     public static class Defs {
 
         public static float Unit = 0.50f;
+        public static int CellSize = 50; // pixel count
 
         /*─────────────────────────────────────┐
         │                Colors                │
