@@ -3,30 +3,51 @@ using UnityEngine;
 
 namespace qiekn.core {
     public class GridManager : MonoBehaviour {
-        Grid grid;
+        public Grid grid;
 
-        Dictionary<Vector2Int, Crate> occupiedCells;
+        Dictionary<Vector2Int, Crate> crateCells;
         HashSet<Vector2Int> groundCells;
 
-        void Start() {
-            grid = GetComponent<Grid>();
+        void Awake() {
+            if (grid == null) {
+                grid = GetComponent<Grid>();
+                if (grid == null) {
+                    Debug.LogError("GridManager: Grid component is null");
+                } else {
+                    Debug.Log("GridManager: You should say thanks.");
+                }
+            }
+        }
+
+        public void RegisterCompositeCrate(Crate crate) {
+            var pos = crate.position;
+            foreach (var offset in crate.offsets) {
+                if (crateCells.ContainsKey(pos + offset)) {
+                    Debug.LogError("GridSystem: crate unit already exists at " + (pos + offset));
+                }
+                crateCells[pos + offset] = crate;
+            }
+        }
+
+        public void UnRegisterCompositeCrate(Crate crate) {
+            var pos = crate.position;
+            foreach (var offset in crate.offsets) {
+                crateCells.Remove(pos + offset);
+            }
+        }
+
+        public bool IsCrateCellOccupied(Vector2Int position) {
+            return crateCells.ContainsKey(position);
+        }
+
+        /*─────────────────────────────────────┐
+        │         Cell / World Positon         │
+        └──────────────────────────────────────*/
+        public Vector3 CellToWorld(Vector2Int pos) {
+            return grid.CellToWorld(new(pos.x, pos.y, 0));
         }
 
         /*
-        public void RegisterCompositeCrate(CompositeCrate crate) {
-            occupiedCells[crate.position] = crate;
-        }
-
-        public void UnRegisterCompositeCrate(CompositeCrate crate) {
-            occupiedCells.Remove(crate.position);
-        }
-
-        void Generate() { }
-
-        public bool IsCellOccupied(Vector2Int pos) {
-            return occupiedCells.ContainsKey(pos);
-        }
-
         public bool IsObstacle(Vector2Int pos) {
             return !groundCells.Contains(pos);
         }
