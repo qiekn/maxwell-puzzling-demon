@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3628608200489563173
+--- !u!1 &2832242693346510859
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,23 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8343302286419317674}
-  - component: {fileID: 7077179372250431387}
-  - component: {fileID: -4865259215392298377}
+  - component: {fileID: 3454598199227774398}
+  - component: {fileID: 2024775672956234791}
   m_Layer: 0
-  m_Name: GridManager
+  m_Name: LevelManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8343302286419317674
+--- !u!4 &3454598199227774398
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3628608200489563173}
+  m_GameObject: {fileID: 2832242693346510859}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -33,28 +32,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!156049354 &7077179372250431387
-Grid:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3628608200489563173}
-  m_Enabled: 1
-  m_CellSize: {x: 0.5, y: 0.5, z: 1}
-  m_CellGap: {x: 0, y: 0, z: 0}
-  m_CellLayout: 0
-  m_CellSwizzle: 0
---- !u!114 &-4865259215392298377
+--- !u!114 &2024775672956234791
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3628608200489563173}
+  m_GameObject: {fileID: 2832242693346510859}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2fc6f304ada1e4634bdf853efe050080, type: 3}
+  m_Script: {fileID: 11500000, guid: be4bbb9fac4334b048b60d3c7397c056, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 7077179372250431387}
+  playerPrefab: {fileID: 7808934859541473497, guid: 86b568694c359458492bd4c3ae7ea487, type: 3}
+  cratePrefab: {fileID: 5023560128116011992, guid: 7b286e048476c432298140940b4c78af, type: 3}
+  data: {fileID: 11400000, guid: 4b026e55ceda14ab0ae8a2194a3102b7, type: 2}

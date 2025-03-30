@@ -35,6 +35,7 @@ namespace qiekn.core {
 
         // basic
         public static Color GRAY = new Color32(229, 229, 229, 255);
+        public static Color MIDGRAY = new Color32(175, 175, 175, 255);
         public static Color DARKGRAY = new Color32(90, 90, 90, 255);
 
         // crate

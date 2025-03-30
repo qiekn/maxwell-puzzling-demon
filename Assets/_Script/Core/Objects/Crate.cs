@@ -34,6 +34,12 @@ namespace qiekn.core {
 
         #endregion
 
+        public void Init(CrateData data) {
+            this.temperature = data.Temperature;
+            this.position = data.Position;
+            this.offsets = data.Shape;
+        }
+
         public void UpdateBorders() {
             // generate units
             units = new Dictionary<Vector2Int, Unit>();
@@ -211,7 +217,7 @@ namespace qiekn.core {
                     break;
                 case Temperature.Neutral:
                     backgroundSR.color = Defs.GRAY;
-                    BorderSR.color = Defs.DARKGRAY;
+                    BorderSR.color = Defs.MIDGRAY;
                     break;
                 case Temperature.Magic:
                     backgroundSR.color = Defs.GREEN;

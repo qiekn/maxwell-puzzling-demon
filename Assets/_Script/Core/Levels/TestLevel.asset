@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e15b410417eb848e5a14bd0840f2ed04, type: 3}
+  m_Name: TestLevel
+  m_EditorClassIdentifier: 
+  LevelName: TestLevel
+  LevelSize: {x: 8, y: 5}
+  SpawnPoints: {x: 5, y: 1}
+  Crates:
+  - Temperature: -10
+    Position: {x: 0, y: 0}
+    Shape:
+    - {x: 0, y: 0}
+    - {x: 0, y: 1}
+    - {x: 0, y: 2}
+  - Temperature: 10
+    Position: {x: 6, y: 0}
+    Shape:
+    - {x: 0, y: 0}
+  - Temperature: 10
+    Position: {x: 7, y: 1}
+    Shape:
+    - {x: 0, y: 0}
+  - Temperature: 0
+    Position: {x: 3, y: 1}
+    Shape:
+    - {x: 0, y: 0}
+  Targets:
+  - {x: 7, y: 4}
