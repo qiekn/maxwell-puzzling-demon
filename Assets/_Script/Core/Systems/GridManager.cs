@@ -17,9 +17,15 @@ namespace qiekn.core {
                     Debug.Log("GridManager: You should say thanks.");
                 }
             }
+            crateCells = new Dictionary<Vector2Int, Crate>();
+            groundCells = new HashSet<Vector2Int>();
         }
 
-        public void RegisterCompositeCrate(Crate crate) {
+        /*─────────────────────────────────────┐
+        │            Info Maintenan            │
+        └──────────────────────────────────────*/
+
+        public void RegisterCrate(Crate crate) {
             var pos = crate.position;
             foreach (var offset in crate.offsets) {
                 if (crateCells.ContainsKey(pos + offset)) {
@@ -29,39 +35,54 @@ namespace qiekn.core {
             }
         }
 
-        public void UnRegisterCompositeCrate(Crate crate) {
+        public void UnRegisterCrate(Crate crate) {
             var pos = crate.position;
             foreach (var offset in crate.offsets) {
                 crateCells.Remove(pos + offset);
             }
         }
 
-        public bool IsCrateCellOccupied(Vector2Int position) {
-            return crateCells.ContainsKey(position);
-        }
-
         /*─────────────────────────────────────┐
-        │         Cell / World Positon         │
+        │             Info Provide             │
         └──────────────────────────────────────*/
+
         public Vector3 CellToWorld(Vector2Int pos) {
             return grid.CellToWorld(new(pos.x, pos.y, 0));
         }
 
-        /*
         public bool IsObstacle(Vector2Int pos) {
-            return !groundCells.Contains(pos);
+            return false;
+            // to-do
+            // return !groundCells.Contains(pos);
         }
 
-        public bool CanMoveTo(Vector2Int pos, CompositeCrate crate) {
-            foreach (var offset in crate.shape) {
-                var dest = pos + offset;
-                if (IsObstacle(dest) || (IsCellOccupied(dest) && occupiedCells[dest] != crate)) {
+        public bool IsCrateCellOccupied(Vector2Int position) {
+            return crateCells.ContainsKey(position);
+        }
+
+        public IMovable GetCrate(Vector2Int position) {
+            return crateCells[position];
+        }
+
+        /*─────────────────────────────────────┐
+        │               Physics                │
+        └──────────────────────────────────────*/
+
+        public bool CanMove(Vector2Int dir, IMovable obj) {
+            foreach (var pos in obj.GetUnitsPosition()) {
+                var dest = pos + dir;
+                if (IsObstacle(dest)) {
+                    Debug.Log("GridSystem: hit obstacle");
                     return false;
+                }
+                if (IsCrateCellOccupied(dest) && GetCrate(dest) != GetCrate(pos)) {
+                    if (!GetCrate(dest).BePushed(dir)) {
+                        Debug.Log("GridSystem: chain push failed");
+                        return false;
+                    }
                 }
             }
             return true;
         }
-        */
-
     }
 }

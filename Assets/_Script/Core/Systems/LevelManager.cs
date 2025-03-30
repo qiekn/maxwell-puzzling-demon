@@ -28,8 +28,9 @@ namespace qiekn.core {
             }
             // player
             // player sprite's pivot is center, so we need some offset
-            var playerPosition = gm.CellToWorld(data.SpawnPoints) + new Vector3(0.25f, 0.25f, 0f);
+            var playerPosition = gm.CellToWorld(data.SpawnPoints) + Defs.playerOffset;
             var player = Instantiate(playerPrefab, playerPosition, Quaternion.identity);
+            player.GetComponent<Player>().Init(data.SpawnPoints);
             player.name = "player";
         }
 

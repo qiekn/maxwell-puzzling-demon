@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace qiekn.core {
 
@@ -28,6 +29,8 @@ namespace qiekn.core {
             new(-1, 1),
             new(-1, -1)
         };
+
+        public static Vector3 playerOffset = new(0.25f, 0.25f, 0);
 
         /*─────────────────────────────────────┐
         │                Colors                │

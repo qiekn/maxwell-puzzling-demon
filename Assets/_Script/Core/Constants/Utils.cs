@@ -25,8 +25,6 @@ namespace qiekn.core {
                     texture.SetPixel(x, y, Color.white);
                 }
             }
-            Debug.Log("Draw Horizontal:" + border.pos);
-            Debug.Log(xMin + "," + xMax + "," + yMin + "," + yMax);
         }
 
         public static void DrawVerticalBorder(Texture2D texture, Border border, int cellSize, int borderSize) {
@@ -49,8 +47,6 @@ namespace qiekn.core {
                     texture.SetPixel(x, y, Color.white);
                 }
             }
-            Debug.Log("Draw Vertical:" + border.pos);
-            Debug.Log(xMin + "," + xMax + "," + yMin + "," + yMax);
         }
 
         public static Vector3 CalculateDest(Vector3 pos, Vector2Int dir) {

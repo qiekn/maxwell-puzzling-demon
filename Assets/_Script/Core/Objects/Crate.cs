@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace qiekn.core {
-    public class Crate : MonoBehaviour, IMoveable, ITemperature {
+    public class Crate : MonoBehaviour, IMovable, ITemperature {
 
         #region Field
 
@@ -26,21 +26,22 @@ namespace qiekn.core {
 
         void Start() {
             gm = FindFirstObjectByType<GridManager>();
-            /*gm.RegisterCrate(this);*/
-            UpdateBorders();
+            gm.RegisterCrate(this);
+            InitBorders();
             UpdateSprites();
             UpdateColor();
         }
 
         #endregion
 
+        // used for level manager
         public void Init(CrateData data) {
-            this.temperature = data.Temperature;
-            this.position = data.Position;
-            this.offsets = data.Shape;
+            temperature = data.Temperature;
+            position = data.Position;
+            offsets = data.Shape;
         }
 
-        public void UpdateBorders() {
+        public void InitBorders() {
             // generate units
             units = new Dictionary<Vector2Int, Unit>();
             foreach (var offset in offsets) {
@@ -176,21 +177,22 @@ namespace qiekn.core {
         │               Movable                │
         └──────────────────────────────────────*/
 
-        /*
-        public bool CanMove(Vector2Int direction) {
-            var dest = position + direction;
-            return gm.CanMoveTo(dest, this);
+        bool TryMove(Vector2Int dir) {
+            Debug.Log("crate_" + position + " try move to " + (position + dir));
+            if (gm.CanMove(dir, this)) {
+                Move(dir);
+                return true;
+            }
+            Debug.Log("crate can't move");
+            return false;
         }
 
-        public void Move(Vector2Int direction) {
-            if (CanMove(direction)) {
-                gm.UnRegisterCrate(this);
-                position += direction;
-                gm.RegisterCrate(this);
-                transform.position = new Vector3(position.x, position.y, 0);
-            }
+        void Move(Vector2Int dir) {
+            gm.UnRegisterCrate(this);
+            position += dir;
+            transform.position = gm.CellToWorld(position);
+            gm.RegisterCrate(this);
         }
-        */
 
         /*─────────────────────────────────────┐
         │             Temperature              │
@@ -224,6 +226,22 @@ namespace qiekn.core {
                     BorderSR.color = Defs.DARKGREEN;
                     break;
             }
+        }
+
+        /*─────────────────────────────────────┐
+        │          IMovable Interface          │
+        └──────────────────────────────────────*/
+
+        public List<Vector2Int> GetUnitsPosition() {
+            var res = new List<Vector2Int>();
+            foreach (var offset in offsets) {
+                res.Add(position + offset);
+            }
+            return res;
+        }
+
+        public bool BePushed(Vector2Int dir) {
+            return TryMove(dir);
         }
     }
 }
