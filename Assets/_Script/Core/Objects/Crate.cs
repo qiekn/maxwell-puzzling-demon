@@ -1,33 +1,43 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace qiekn.core {
     public class Crate : MonoBehaviour, IMoveable, ITemperature {
-        [SerializeField] Temperature temperature;
-        public Vector2Int position; // grid position
-        public List<Vector2Int> offsets;
-        public Dictionary<Vector2Int, Unit> units;
-        public List<Border> borders; // outline border
 
-        SpriteRenderer sr;
+        #region Field
+
+        // caches
+        [SerializeField] SpriteRenderer backgroundSR; // background sprite
+        [SerializeField] SpriteRenderer BorderSR; // border sprite
+
+        [SerializeField] Temperature temperature;
+
+        public Vector2Int position; // grid position
+        public List<Vector2Int> offsets; // crate shape
+
+        public Dictionary<Vector2Int, Unit> units; // use this info to disable inner border
+        public List<Border> borders; // outline borders
+
         GridManager gm;
+
+        #endregion
+
+        #region Unity
 
         void Start() {
             gm = FindFirstObjectByType<GridManager>();
-            sr = GetComponent<SpriteRenderer>();
             /*gm.RegisterCrate(this);*/
             UpdateBorders();
-            GenerateSprite();
+            UpdateSprites();
             UpdateColor();
         }
 
-        void UpdateBorders() {
+        #endregion
+
+        public void UpdateBorders() {
             // generate units
             units = new Dictionary<Vector2Int, Unit>();
             foreach (var offset in offsets) {
-                // Debug.Log("units: " + offset.x + " " + offset.y);
                 units.Add(offset, new Unit(offset));
             }
             // generate borders
@@ -38,26 +48,19 @@ namespace qiekn.core {
                 var unit = units[pos];
                 foreach (var dir in Defs.directions) {
                     if (units.ContainsKey(pos + dir)) {
-                        // Debug.Log("disable border: " + pos + " " + dir);
                         unit.borders[dir].type = BorderType.none;
                     } else {
-                        // Debug.Log("enable border: " + pos + " " + dir);
                         borders.Add(unit.borders[dir]);
                     }
                 }
             }
-            Debug.Log("borders size: " + borders.Count);
         }
 
         /*─────────────────────────────────────┐
         │               Renderer               │
         └──────────────────────────────────────*/
-        public void GenerateSprite() {
-            if (sr == null) {
-                sr = GetComponent<SpriteRenderer>();
-            }
 
-            // calculate sprite bounds
+        Vector2Int CalculateBounds() {
             int width = 0;
             int height = 0;
             foreach (var offset in offsets) {
@@ -65,19 +68,35 @@ namespace qiekn.core {
                 height = Mathf.Max(height, offset.y + 1);
             }
 
-            // create texture
             int texWidth = width * Defs.CellSize;
             int texHeight = height * Defs.CellSize;
+            return new(texWidth, texHeight);
+        }
+
+        Texture2D GenerateTexture() {
+            var bounds = CalculateBounds();
+            int texWidth = bounds.x;
+            int texHeight = bounds.y;
+
             var texture = new Texture2D(texWidth, texHeight);
 
-            // init texture color to transparent
+            // init texture color --> transparent
             var pixels = new Color32[texWidth * texHeight];
             for (int i = 0; i < pixels.Length; i++) {
                 pixels[i] = Color.clear;
             }
             texture.SetPixels32(pixels);
 
-            // draw sprite
+            return texture;
+        }
+
+        public void UpdateSprites() {
+            GenerateBackgroundSprite();
+            GenerateBorderSprite();
+        }
+
+        public void GenerateBackgroundSprite() {
+            var texture = GenerateTexture();
             foreach (var offset in offsets) {
                 var startX = offset.x * Defs.CellSize;
                 var startY = offset.y * Defs.CellSize;
@@ -87,14 +106,64 @@ namespace qiekn.core {
                     }
                 }
             }
+            texture.filterMode = FilterMode.Point;
+            texture.Apply();
+            var sprite = Sprite.Create(texture,
+                    new Rect(0, 0, texture.width, texture.height),
+                    new Vector2(0, 0));
+            sprite.name = "background";
+            backgroundSR.sprite = sprite;
+        }
 
-            // draw border
-            // to-do
+        public void GenerateBorderSprite() {
+            var texture = GenerateTexture();
+            var cellSize = Defs.CellSize;
+            var borderSize = Defs.BorderSize;
+            foreach (var border in borders) {
+                if (border.dir == Vector2Int.up || border.dir == Vector2Int.down) {
+                    Utils.DrawHorizontalBorder(texture, border, cellSize, borderSize);
+                } else if (border.dir == Vector2Int.left || border.dir == Vector2Int.right) {
+                    Utils.DrawVerticalBorder(texture, border, cellSize, borderSize);
+                }
+            }
+
+
+
+            // fix inner corner
+            bool PixelExist(int x, int y) {
+                if (x >= 0 && x < texture.width && y >= 0 && y < texture.height) {
+                    return texture.GetPixel(x, y) == Color.white;
+                }
+                return false;
+            }
+            var fixPos = new List<Vector2Int>();
+            for (int y = 0; y < texture.width; y++) {
+                for (int x = 0; x < texture.height; x++) {
+                    foreach (var dir in Defs.crossDirections) {
+                        var offsetX = dir.x * borderSize;
+                        var offsetY = dir.y * borderSize;
+                        if (!PixelExist(x, y) &&
+                                PixelExist(x + offsetX, y) &&
+                                PixelExist(x, y + offsetY) &&
+                                !PixelExist(x + offsetY, y + offsetY) &&
+                                PixelExist(x + offsetX * 2, y) &&
+                                PixelExist(x, y + offsetY * 2)) {
+                            fixPos.Add(new(x, y));
+                        }
+                    }
+                }
+            }
+            foreach (var pos in fixPos) {
+                texture.SetPixel(pos.x, pos.y, Color.white);
+            }
 
             texture.filterMode = FilterMode.Point;
             texture.Apply();
-            var sprite = Sprite.Create(texture, new Rect(0, 0, texWidth, texHeight), new Vector2(0, 0));
-            sr.sprite = sprite;
+            var sprite = Sprite.Create(texture,
+                    new Rect(0, 0, texture.width, texture.height),
+                    new Vector2(0, 0));
+            sprite.name = "borders";
+            BorderSR.sprite = sprite;
         }
 
         /*─────────────────────────────────────┐
@@ -133,16 +202,20 @@ namespace qiekn.core {
         public void UpdateColor() {
             switch (temperature) {
                 case Temperature.Hot:
-                    sr.color = Defs.RED;
+                    backgroundSR.color = Defs.RED;
+                    BorderSR.color = Defs.DARKRED;
                     break;
                 case Temperature.Cold:
-                    sr.color = Defs.BLUE;
+                    backgroundSR.color = Defs.BLUE;
+                    BorderSR.color = Defs.DARKBLUE;
                     break;
                 case Temperature.Neutral:
-                    sr.color = Defs.GRAY;
+                    backgroundSR.color = Defs.GRAY;
+                    BorderSR.color = Defs.DARKGRAY;
                     break;
                 case Temperature.Magic:
-                    sr.color = Defs.GREEN;
+                    backgroundSR.color = Defs.GREEN;
+                    BorderSR.color = Defs.DARKGREEN;
                     break;
             }
         }
