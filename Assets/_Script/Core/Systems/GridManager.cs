@@ -12,11 +12,12 @@ namespace qiekn.core {
             grid = GetComponent<Grid>();
         }
 
-        public void RegisterCrate(Crate crate) {
+        /*
+        public void RegisterCompositeCrate(CompositeCrate crate) {
             occupiedCells[crate.position] = crate;
         }
 
-        public void UnRegisterCrate(Crate crate) {
+        public void UnRegisterCompositeCrate(CompositeCrate crate) {
             occupiedCells.Remove(crate.position);
         }
 
@@ -30,7 +31,7 @@ namespace qiekn.core {
             return !groundCells.Contains(pos);
         }
 
-        public bool CanMoveTo(Vector2Int pos, Crate crate) {
+        public bool CanMoveTo(Vector2Int pos, CompositeCrate crate) {
             foreach (var offset in crate.shape) {
                 var dest = pos + offset;
                 if (IsObstacle(dest) || (IsCellOccupied(dest) && occupiedCells[dest] != crate)) {
@@ -39,6 +40,7 @@ namespace qiekn.core {
             }
             return true;
         }
+        */
 
     }
 }
