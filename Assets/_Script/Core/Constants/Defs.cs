@@ -13,12 +13,20 @@ namespace qiekn.core {
 
         public static float Unit = 0.50f;
         public static int CellSize = 50; // pixel count
+        public static int BorderSize = 3; // pixel count
 
         public static Vector2Int[] directions = {
             Vector2Int.left,
             Vector2Int.right,
             Vector2Int.up,
             Vector2Int.down
+        };
+
+        public static Vector2Int[] crossDirections = {
+            new(1, 1),
+            new(1, -1),
+            new(-1, 1),
+            new(-1, -1)
         };
 
         /*─────────────────────────────────────┐

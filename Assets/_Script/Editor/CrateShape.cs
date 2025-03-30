@@ -10,7 +10,10 @@ namespace qiekn.editor {
             var obj = target as Crate;
 
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Generate Sprite")) { obj.GenerateSprite(); }
+            if (GUILayout.Button("Update Sprites")) {
+                obj.UpdateBorders();
+                obj.UpdateSprites();
+            }
             if (GUILayout.Button("Update Color")) { obj.UpdateColor(); }
             GUILayout.EndHorizontal();
         }
