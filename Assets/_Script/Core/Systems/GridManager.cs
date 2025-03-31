@@ -76,9 +76,12 @@ namespace qiekn.core {
             var set = new HashSet<T>();
             foreach (var dir in Defs.directions) {
                 var dest = pos + dir;
-                if (GetCrate(dest, out var adjacent) &&
-                        adjacent.units[dest - adjacent.position].borders[-dir].type != BorderType.shield &&
-                        adjacent is T type) {
+                if (GetCrate(dest, out var adjacent) && adjacent is T type) {
+                    // feat: heat shield
+                    if (typeof(ITemperature).IsAssignableFrom(typeof(T)) &&
+                    adjacent.units[dest - adjacent.position].borders[-dir].type != BorderType.shield) {
+                        continue;
+                    }
                     set.Add(type);
                 }
             }
@@ -86,18 +89,21 @@ namespace qiekn.core {
         }
 
         // used by crate Move()
-        /* TODO: check border <2025-03-31 17:25, @qiekn> */
         public HashSet<T> GetAdjacent<T>(Crate crate) where T : class {
             var set = new HashSet<T>(); // unique adjacent crates
             var pos = crate.position;
             foreach (var offset in crate.offsets) {
                 foreach (var dir in Defs.directions) {
                     var dest = pos + offset + dir;
-                    if (crate.units[offset].borders[dir].type != BorderType.shield && // check my heat shield
-                            GetCrate(dest, out var adjacent) && // get neighbor crate
+                    if (GetCrate(dest, out var adjacent) && // get neighbor crate
                             adjacent != crate && // deduplicate
-                            adjacent.units[dest - adjacent.position].borders[-dir].type != BorderType.shield && // check neighbor's heat shield
-                            adjacent is T type) {
+                            adjacent is T type) { // convert to T
+                        // feat: heat shield
+                        if (typeof(ITemperature).IsAssignableFrom(typeof(T)) &&
+                                crate.units[offset].borders[dir].type != BorderType.shield && // check my heat shield
+                                adjacent.units[dest - adjacent.position].borders[-dir].type != BorderType.shield) { // check neighbor's heat shield
+                            continue;
+                        }
                         set.Add(type);
                     }
                 }
