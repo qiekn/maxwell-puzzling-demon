@@ -22,9 +22,14 @@ namespace qiekn.core {
             yMin = Mathf.Max(0, yMin);
             yMax = Mathf.Min(texture.height, yMax);
 
+            var color = Color.white;
+            if (border.type == BorderType.shield) {
+                color = Color.black;
+            }
+
             for (int y = yMin; y < yMax; y++) {
                 for (int x = xMin; x < xMax; x++) {
-                    texture.SetPixel(x, y, Color.white);
+                    texture.SetPixel(x, y, color);
                 }
             }
         }
@@ -44,9 +49,14 @@ namespace qiekn.core {
             xMin = Mathf.Max(0, xMin);
             xMax = Mathf.Min(texture.width, xMax);
 
+            var color = Color.white;
+            if (border.type == BorderType.shield) {
+                color = Color.black;
+            }
+
             for (int y = yMin; y < yMax; y++) {
                 for (int x = xMin; x < xMax; x++) {
-                    texture.SetPixel(x, y, Color.white);
+                    texture.SetPixel(x, y, color);
                 }
             }
         }

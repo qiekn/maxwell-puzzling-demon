@@ -6,6 +6,7 @@ namespace qiekn.core {
     [Serializable]
     public enum BorderType {
         conductive,
+        shield,
         sticky,
         none,
     }

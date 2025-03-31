@@ -76,7 +76,9 @@ namespace qiekn.core {
             var set = new HashSet<T>();
             foreach (var dir in Defs.directions) {
                 var dest = pos + dir;
-                if (GetCrate(dest, out var adjacent) && adjacent is T type) {
+                if (GetCrate(dest, out var adjacent) &&
+                        adjacent.units[dest - adjacent.position].borders[-dir].type != BorderType.shield &&
+                        adjacent is T type) {
                     set.Add(type);
                 }
             }
@@ -90,10 +92,13 @@ namespace qiekn.core {
             var pos = crate.position;
             foreach (var offset in crate.offsets) {
                 foreach (var dir in Defs.directions) {
-                    if (GetCrate(pos + offset + dir, out var adjacent)) {
-                        if (adjacent != crate && adjacent is T type) {
-                            set.Add(type);
-                        }
+                    var dest = pos + offset + dir;
+                    if (crate.units[offset].borders[dir].type != BorderType.shield && // check my heat shield
+                            GetCrate(dest, out var adjacent) && // get neighbor crate
+                            adjacent != crate && // deduplicate
+                            adjacent.units[dest - adjacent.position].borders[-dir].type != BorderType.shield && // check neighbor's heat shield
+                            adjacent is T type) {
+                        set.Add(type);
                     }
                 }
             }
