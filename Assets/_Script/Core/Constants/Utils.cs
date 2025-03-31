@@ -5,6 +5,8 @@ using UnityEngine;
 namespace qiekn.core {
     public static class Utils {
 
+        #region SpriteTexture
+
         public static void DrawHorizontalBorder(Texture2D texture, Border border, int cellSize, int borderSize) {
             float yOffset = border.dir == Vector2Int.up ? 1f : -1f;
             float yCenter = (border.pos.y + 0.5f) * cellSize + yOffset * (cellSize - borderSize) * 0.5f;
@@ -49,19 +51,73 @@ namespace qiekn.core {
             }
         }
 
-        public static Vector3 CalculateDest(Vector3 pos, Vector2Int dir) {
-            var step = Defs.Unit;
-            var dest = new Vector3(pos.x + dir.x * step, pos.y + dir.y * step, pos.z);
-            return dest;
+        #endregion
+
+        #region SpriteColor
+
+        public static void UpdateSpritesColor(SpriteRenderer spriteRenderer, Temperature t) {
+            switch (t) {
+                case Temperature.Hot:
+                    spriteRenderer.color = Defs.RED;
+                    break;
+                case Temperature.Cold:
+                    spriteRenderer.color = Defs.BLUE;
+                    break;
+                case Temperature.Neutral:
+                    spriteRenderer.color = Defs.GRAY;
+                    break;
+                case Temperature.Magic:
+                    spriteRenderer.color = Defs.GREEN;
+                    break;
+            }
         }
 
-        public static List<Vector3> CalculateDests(List<Vector3> positions, Vector2Int dir) {
-            var res = new List<Vector3>();
-            foreach (var pos in positions) {
-                res.Append(CalculateDest(pos, dir));
+        public static void UpdateSpritesColor(SpriteRenderer[] spriteRenderers, Temperature t) {
+            foreach (var sprite in spriteRenderers) {
+                UpdateSpritesColor(sprite, t);
             }
-            return res;
         }
+
+        public static void UpdateBordersColor(SpriteRenderer border, Temperature t) {
+            switch (t) {
+                case Temperature.Hot:
+                    border.color = Defs.DARKRED;
+                    break;
+                case Temperature.Cold:
+                    border.color = Defs.DARKBLUE;
+                    break;
+                case Temperature.Neutral:
+                    border.color = Defs.MIDGRAY;
+                    break;
+                case Temperature.Magic:
+                    border.color = Defs.DARKGREEN;
+                    break;
+            }
+
+        }
+
+        public static void UpdateBordersColor(SpriteRenderer[] borders, Temperature t) {
+            foreach (var border in borders) {
+                UpdateBordersColor(border, t);
+            }
+        }
+
+        public static void UpdateSpritesColorWithBorder(SpriteRenderer[] backgrounds, SpriteRenderer[] borders, Temperature t) {
+            UpdateSpritesColor(backgrounds, t);
+            UpdateBordersColor(borders, t);
+        }
+
+        #endregion
+
+        #region Miscellaneous
+
+        public static Temperature GetTemperature(int t) => t switch {
+            > 9999 => Temperature.Magic,
+            > 0 => Temperature.Hot,
+            < 0 => Temperature.Cold,
+            _ => Temperature.Neutral
+        };
+
 
         public static bool IsGround(Vector3 pos, LayerMask layerMask) {
             var hit = Physics2D.OverlapPoint(pos, layerMask);
@@ -71,19 +127,7 @@ namespace qiekn.core {
             return false;
         }
 
-        public static bool IsCrate(Vector3 pos, LayerMask layerMask) {
-            var hit = Physics2D.OverlapPoint(pos, layerMask);
-            if (hit != null) {
-                return true;
-            }
-            return false;
-        }
-        public static GameObject GetCrate(Vector3 pos, LayerMask layerMask) {
-            var hit = Physics2D.OverlapPoint(pos, layerMask);
-            if (hit != null) {
-                return hit.gameObject;
-            }
-            return null;
-        }
+        #endregion
+
     }
 }

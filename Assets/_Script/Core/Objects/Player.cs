@@ -1,27 +1,30 @@
 using System.Collections.Generic;
-using Codice.Client.Common.FsNodeReaders;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace qiekn.core {
-    public class Player : MonoBehaviour, IMovable {
+    public class Player : MonoBehaviour, IMovable, ITemperature {
 
+        [SerializeField] SpriteRenderer circleSpriteRenderer;
         [SerializeField] SpriteRenderer decorationSpriteRenderer;
         [SerializeField] Vector2Int position;
+        [SerializeField] Temperature temperature;
+        HeatSystem hm;
         GridManager gm;
 
         void Start() {
             gm = FindFirstObjectByType<GridManager>().GetComponent<GridManager>();
+            hm = HeatSystem.Instance;
+            temperature = Temperature.Neutral;
         }
 
         void Update() {
             UpdatePlayerInput();
         }
 
+        // used for level manager
         public void Init(Vector2Int position_) {
             position = position_;
         }
-
 
         void UpdatePlayerInput() {
             if (Input.GetKeyDown(KeyCode.W)) {
@@ -37,6 +40,7 @@ namespace qiekn.core {
             }
         }
 
+
         // handle collision detection
         bool TryMove(Vector2Int dir) {
             var dest = position + dir;
@@ -47,7 +51,7 @@ namespace qiekn.core {
             }
             Debug.Log("player move: try push other");
             // can push others
-            var other = gm.GetCrate(dest);
+            var other = gm.GetMovable(dest);
             if (gm.CanMove(dir, other)) {
                 other.BePushed(dir);
                 Move(dest);
@@ -61,6 +65,10 @@ namespace qiekn.core {
         void Move(Vector2Int dest) {
             position = dest;
             transform.position = gm.CellToWorld(dest) + Defs.playerOffset;
+            temperature = Temperature.Neutral;
+            hm.Register(this);
+            hm.Register(gm.GetAdjacent<ITemperature>(position));
+            hm.Balance();
         }
 
         void Turn(bool left) {
@@ -83,6 +91,29 @@ namespace qiekn.core {
 
         public bool BePushed(Vector2Int dir) {
             return TryMove(dir);
+        }
+
+        /*─────────────────────────────────────┐
+        │        ITemperature Interface        │
+        └──────────────────────────────────────*/
+
+        public int GetTemperature() {
+            return (int)temperature;
+        }
+
+        public void SetTemperature(Temperature t) {
+            temperature = t;
+        }
+
+        public void UpdateColor() {
+            Utils.UpdateSpritesColor(circleSpriteRenderer, temperature);
+            // temp solution:
+            // my demon's gray color is bad,
+            // so reset neutral color to midgray
+            if (temperature == Temperature.Neutral) {
+                circleSpriteRenderer.color = Defs.MIDGRAY;
+            }
+
         }
     }
 }

@@ -16,17 +16,17 @@ MonoBehaviour:
   LevelSize: {x: 8, y: 5}
   SpawnPoints: {x: 5, y: 1}
   Crates:
-  - Temperature: -10
+  - Temperature: -1
     Position: {x: 0, y: 0}
     Shape:
     - {x: 0, y: 0}
     - {x: 0, y: 1}
     - {x: 0, y: 2}
-  - Temperature: 10
+  - Temperature: 1
     Position: {x: 6, y: 0}
     Shape:
     - {x: 0, y: 0}
-  - Temperature: 10
+  - Temperature: 1
     Position: {x: 7, y: 1}
     Shape:
     - {x: 0, y: 0}

@@ -1,13 +1,12 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace qiekn.core {
 
     public enum Temperature {
-        Cold = -10,
+        Cold = -1,
         Neutral = 0,
-        Magic = 1, // green temperature
-        Hot = 10,
+        Hot = 1,
+        Magic = 9999, // green temperature
     }
 
     public static class Defs {

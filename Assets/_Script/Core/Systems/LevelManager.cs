@@ -23,7 +23,7 @@ namespace qiekn.core {
             // crates
             foreach (var crateData in data.Crates) {
                 var obj = Instantiate(cratePrefab, gm.CellToWorld(crateData.Position), Quaternion.identity);
-                obj.GetComponent<Crate>().Init(crateData);
+                obj.GetComponent<Crate>().InitCrate(crateData);
                 obj.name = "crate_" + crateData.Position;
             }
             // player

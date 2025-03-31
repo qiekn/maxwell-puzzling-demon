@@ -60,8 +60,44 @@ namespace qiekn.core {
             return crateCells.ContainsKey(position);
         }
 
-        public IMovable GetCrate(Vector2Int position) {
-            return crateCells[position];
+        public ITemperature GetTemperature(Vector2Int position) => crateCells[position];
+
+        public IMovable GetMovable(Vector2Int position) => crateCells[position];
+
+        public bool GetCrate(Vector2Int position, out Crate crate) {
+            return crateCells.TryGetValue(position, out crate);
+        }
+
+        // return adjacent crates around given position
+        // adjacent crates should be unique
+        // however, we do not check for duplicates with the given position
+        // used by player Move()
+        public HashSet<T> GetAdjacent<T>(Vector2Int pos) where T : class {
+            var set = new HashSet<T>();
+            foreach (var dir in Defs.directions) {
+                var dest = pos + dir;
+                if (GetCrate(dest, out var adjacent) && adjacent is T type) {
+                    set.Add(type);
+                }
+            }
+            return set;
+        }
+
+        // used by crate Move()
+        /* TODO: check border <2025-03-31 17:25, @qiekn> */
+        public HashSet<T> GetAdjacent<T>(Crate crate) where T : class {
+            var set = new HashSet<T>(); // unique adjacent crates
+            var pos = crate.position;
+            foreach (var offset in crate.offsets) {
+                foreach (var dir in Defs.directions) {
+                    if (GetCrate(pos + offset + dir, out var adjacent)) {
+                        if (adjacent != crate && adjacent is T type) {
+                            set.Add(type);
+                        }
+                    }
+                }
+            }
+            return set;
         }
 
         /*─────────────────────────────────────┐
@@ -75,8 +111,8 @@ namespace qiekn.core {
                     Debug.Log("GridSystem: hit obstacle");
                     return false;
                 }
-                if (IsCrateCellOccupied(dest) && GetCrate(dest) != GetCrate(pos)) {
-                    if (!GetCrate(dest).BePushed(dir)) {
+                if (IsCrateCellOccupied(dest) && GetMovable(dest) != GetMovable(pos)) {
+                    if (!GetMovable(dest).BePushed(dir)) {
                         Debug.Log("GridSystem: chain push failed");
                         return false;
                     }

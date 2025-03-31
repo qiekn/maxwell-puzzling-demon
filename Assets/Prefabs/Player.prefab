@@ -133,7 +133,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5514ab80900d4c3d9004caadf1c7230, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  circleSpriteRenderer: {fileID: 7317328567547461339}
   decorationSpriteRenderer: {fileID: 4544146186116085020}
+  position: {x: 0, y: 0}
+  temperature: 0
 --- !u!212 &7317328567547461339
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -178,8 +181,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: ff4a3564414d7482a9a1668835573308, type: 3}
-  m_Color: {r: 0.3773585, g: 0.3773585, b: 0.3773585, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 1798c268142ab4cf9b0b2f2dbaa9f2a1, type: 3}
+  m_Color: {r: 0.6862745, g: 0.6862745, b: 0.6862745, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

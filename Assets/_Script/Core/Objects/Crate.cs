@@ -35,7 +35,7 @@ namespace qiekn.core {
         #endregion
 
         // used for level manager
-        public void Init(CrateData data) {
+        public void InitCrate(CrateData data) {
             temperature = data.Temperature;
             position = data.Position;
             offsets = data.Shape;
@@ -134,8 +134,6 @@ namespace qiekn.core {
                 }
             }
 
-
-
             // fix inner corner
             bool PixelExist(int x, int y) {
                 if (x >= 0 && x < texture.width && y >= 0 && y < texture.height) {
@@ -174,61 +172,6 @@ namespace qiekn.core {
         }
 
         /*─────────────────────────────────────┐
-        │               Movable                │
-        └──────────────────────────────────────*/
-
-        bool TryMove(Vector2Int dir) {
-            Debug.Log("crate_" + position + " try move to " + (position + dir));
-            if (gm.CanMove(dir, this)) {
-                Move(dir);
-                return true;
-            }
-            Debug.Log("crate can't move");
-            return false;
-        }
-
-        void Move(Vector2Int dir) {
-            gm.UnRegisterCrate(this);
-            position += dir;
-            transform.position = gm.CellToWorld(position);
-            gm.RegisterCrate(this);
-        }
-
-        /*─────────────────────────────────────┐
-        │             Temperature              │
-        └──────────────────────────────────────*/
-
-        public int GetTemperature() {
-            return 0;
-        }
-
-        public void SetTemperature(int val_) {
-            UpdateColor();
-            return;
-        }
-
-        public void UpdateColor() {
-            switch (temperature) {
-                case Temperature.Hot:
-                    backgroundSR.color = Defs.RED;
-                    BorderSR.color = Defs.DARKRED;
-                    break;
-                case Temperature.Cold:
-                    backgroundSR.color = Defs.BLUE;
-                    BorderSR.color = Defs.DARKBLUE;
-                    break;
-                case Temperature.Neutral:
-                    backgroundSR.color = Defs.GRAY;
-                    BorderSR.color = Defs.MIDGRAY;
-                    break;
-                case Temperature.Magic:
-                    backgroundSR.color = Defs.GREEN;
-                    BorderSR.color = Defs.DARKGREEN;
-                    break;
-            }
-        }
-
-        /*─────────────────────────────────────┐
         │          IMovable Interface          │
         └──────────────────────────────────────*/
 
@@ -241,7 +184,41 @@ namespace qiekn.core {
         }
 
         public bool BePushed(Vector2Int dir) {
-            return TryMove(dir);
+            Debug.Log("crate_" + position + " try to pushed to " + (position + dir));
+            if (gm.CanMove(dir, this)) {
+                Move(dir);
+                return true;
+            }
+            Debug.Log("crate can't be pushed");
+            return false;
+        }
+
+        private void Move(Vector2Int dir) {
+            // maintain
+            gm.UnRegisterCrate(this);
+            position += dir;
+            gm.RegisterCrate(this);
+            HeatSystem.Instance.Register(gm.GetAdjacent<ITemperature>(this));
+            // move
+            transform.position = gm.CellToWorld(position);
+        }
+
+        /*─────────────────────────────────────┐
+        │        ITemperature Interface        │
+        └──────────────────────────────────────*/
+
+        public int GetTemperature() {
+            return (int)temperature * offsets.Count;
+        }
+
+        public void SetTemperature(Temperature t) {
+            temperature = t;
+            UpdateColor();
+        }
+
+        public void UpdateColor() {
+            Utils.UpdateSpritesColor(backgroundSR, temperature);
+            Utils.UpdateBordersColor(BorderSR, temperature);
         }
     }
 }
