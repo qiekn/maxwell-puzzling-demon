@@ -17,7 +17,7 @@ namespace qiekn.core {
         public Vector2Int dir;
         public BorderType type;
 
-        public Border(Vector2Int pos_, Vector2Int dir_, BorderType type_ = BorderType.conductive) {
+        public Border(Vector2Int pos_, Vector2Int dir_, BorderType type_ = BorderType.sticky) {
             pos = pos_;
             dir = dir_;
             type = type_;

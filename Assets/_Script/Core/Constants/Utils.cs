@@ -7,12 +7,20 @@ namespace qiekn.core {
 
         #region SpriteTexture
 
-        public static void DrawHorizontalBorder(Texture2D texture, Border border, int cellSize, int borderSize) {
-            float yOffset = border.dir == Vector2Int.up ? 1f : -1f;
-            float yCenter = (border.pos.y + 0.5f) * cellSize + yOffset * (cellSize - borderSize) * 0.5f;
+        public static void DrawHorizontalBorder(Texture2D texture, Border border, Vector2Int offset) {
+            var color = Color.white;
+            if (border.type == BorderType.shield) {
+                color = Color.black;
+            }
 
-            int xMin = border.pos.x * cellSize;
-            int xMax = (border.pos.x + 1) * cellSize;
+            var cellSize = Defs.CellSize;
+            var borderSize = Defs.BorderSize;
+            var pos = border.pos + offset;
+            float yOffset = border.dir == Vector2Int.up ? 1f : -1f;
+            float yCenter = (pos.y + 0.5f) * cellSize + yOffset * (cellSize - borderSize) * 0.5f;
+
+            int xMin = pos.x * cellSize;
+            int xMax = (pos.x + 1) * cellSize;
             int yMin = Mathf.RoundToInt(yCenter - borderSize / 2f);
             int yMax = Mathf.RoundToInt(yCenter + borderSize / 2f);
 
@@ -22,24 +30,32 @@ namespace qiekn.core {
             yMin = Mathf.Max(0, yMin);
             yMax = Mathf.Min(texture.height, yMax);
 
-            var color = Color.white;
-            if (border.type == BorderType.shield) {
-                color = Color.black;
-            }
-
             for (int y = yMin; y < yMax; y++) {
                 for (int x = xMin; x < xMax; x++) {
+                    if (border.type == BorderType.sticky &&
+                            x > Defs.BorderSize &&
+                            x < texture.width - Defs.BorderSize &&
+                            (x - Defs.BorderSize) % 10 < Defs.DashedLineGap - 1) { // used to draw dashed line
+                        continue;
+                    }
                     texture.SetPixel(x, y, color);
                 }
             }
         }
 
-        public static void DrawVerticalBorder(Texture2D texture, Border border, int cellSize, int borderSize) {
+        public static void DrawVerticalBorder(Texture2D texture, Border border, Vector2Int offset) {
+            var color = Color.white;
+            if (border.type == BorderType.shield) {
+                color = Color.black;
+            }
+            var cellSize = Defs.CellSize;
+            var borderSize = Defs.BorderSize;
+            var pos = border.pos + offset;
             float xOffset = border.dir == Vector2Int.right ? 1f : -1f;
-            float xCenter = (border.pos.x + 0.5f) * cellSize + xOffset * (cellSize - borderSize) * 0.5f;
+            float xCenter = (pos.x + 0.5f) * cellSize + xOffset * (cellSize - borderSize) * 0.5f;
 
-            int yMin = border.pos.y * cellSize;
-            int yMax = (border.pos.y + 1) * cellSize;
+            int yMin = pos.y * cellSize;
+            int yMax = (pos.y + 1) * cellSize;
             int xMin = Mathf.RoundToInt(xCenter - borderSize / 2f);
             int xMax = Mathf.RoundToInt(xCenter + borderSize / 2f);
 
@@ -49,13 +65,14 @@ namespace qiekn.core {
             xMin = Mathf.Max(0, xMin);
             xMax = Mathf.Min(texture.width, xMax);
 
-            var color = Color.white;
-            if (border.type == BorderType.shield) {
-                color = Color.black;
-            }
-
             for (int y = yMin; y < yMax; y++) {
                 for (int x = xMin; x < xMax; x++) {
+                    if (border.type == BorderType.sticky &&
+                            y > Defs.BorderSize &&
+                            y < texture.height - Defs.BorderSize &&
+                            (y - Defs.BorderSize) % 10 < Defs.DashedLineGap - 1) { // used to draw dashed line
+                        continue;
+                    }
                     texture.SetPixel(x, y, color);
                 }
             }

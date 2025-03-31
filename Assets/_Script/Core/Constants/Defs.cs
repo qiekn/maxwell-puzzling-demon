@@ -14,6 +14,7 @@ namespace qiekn.core {
         public static float Unit = 0.50f;
         public static int CellSize = 50; // pixel count
         public static int BorderSize = 3; // pixel count
+        public static int DashedLineGap = 4;
 
         public static Vector2Int[] directions = {
             Vector2Int.left,

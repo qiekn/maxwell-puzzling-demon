@@ -15,11 +15,13 @@ namespace qiekn.core {
     public List<CrateData> Crates;
     public List<Vector2Int> Targets;
 
+    /*
     private void OnEnable() {
       if (Crates == null) Crates = new List<CrateData>();
       // if (Grounds == null) Grounds = new List<Vector2Int>();
       if (Targets == null) Targets = new List<Vector2Int>();
     }
+    */
   }
 
   [Serializable]

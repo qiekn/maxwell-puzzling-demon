@@ -19,6 +19,7 @@ namespace qiekn.core {
         public List<Border> borders; // outline borders
 
         GridManager gm;
+        bool registered = false;
 
         #endregion
 
@@ -26,8 +27,7 @@ namespace qiekn.core {
 
         void Start() {
             gm = FindFirstObjectByType<GridManager>();
-            gm.RegisterCrate(this);
-            InitBorders();
+            Register();
             UpdateSprites();
             UpdateColor();
         }
@@ -67,46 +67,64 @@ namespace qiekn.core {
         │               Renderer               │
         └──────────────────────────────────────*/
 
-        Vector2Int CalculateBounds() {
-            int width = 0;
-            int height = 0;
-            foreach (var offset in offsets) {
-                width = Mathf.Max(width, offset.x + 1);
-                height = Mathf.Max(height, offset.y + 1);
-            }
+        struct Bounds {
+            public Vector2Int size; // square size (pixel)
+            public Vector2Int min; // bottom left pos (grid)
+            public Vector2Int max; // top right pos
+            public Vector2 pivot;
 
-            int texWidth = width * Defs.CellSize;
-            int texHeight = height * Defs.CellSize;
-            return new(texWidth, texHeight);
+            public Bounds(Vector2Int size_, Vector2Int min_, Vector2Int max_, Vector2 pivot_) {
+                size = size_;
+                min = min_;
+                max = max_;
+                pivot = pivot_;
+            }
         }
 
-        Texture2D GenerateTexture() {
-            var bounds = CalculateBounds();
-            int texWidth = bounds.x;
-            int texHeight = bounds.y;
+        Bounds CalculateBounds() {
+            int minX = 0, maxX = 0, minY = 0, maxY = 0;
+            foreach (var offset in offsets) {
+                minX = Mathf.Min(minX, offset.x);
+                maxX = Mathf.Max(maxX, offset.x);
+                minY = Mathf.Min(minY, offset.y);
+                maxY = Mathf.Max(maxY, offset.y);
+            }
+            var size = new Vector2Int {
+                x = (maxX - minX + 1) * Defs.CellSize,
+                y = (maxY - minY + 1) * Defs.CellSize
+            };
+            var pivot = new Vector2(-1.0f * minX / (maxX - minX + 1), -1.0f * minY / (maxY - minY + 1));
+            return new Bounds(size, new(minX, minY), new(maxX, maxY), pivot);
+        }
 
-            var texture = new Texture2D(texWidth, texHeight);
+        Texture2D GenerateTexture(out Bounds res) {
+            var bounds = CalculateBounds();
+            int witdh = bounds.size.x;
+            int height = bounds.size.y;
+
+            var texture = new Texture2D(witdh, height);
 
             // init texture color --> transparent
-            var pixels = new Color32[texWidth * texHeight];
+            var pixels = new Color32[witdh * height];
             for (int i = 0; i < pixels.Length; i++) {
                 pixels[i] = Color.clear;
             }
             texture.SetPixels32(pixels);
-
+            res = bounds;
             return texture;
         }
 
         public void UpdateSprites() {
+            InitBorders();
             GenerateBackgroundSprite();
             GenerateBorderSprite();
         }
 
         public void GenerateBackgroundSprite() {
-            var texture = GenerateTexture();
+            var texture = GenerateTexture(out var bounds);
             foreach (var offset in offsets) {
-                var startX = offset.x * Defs.CellSize;
-                var startY = offset.y * Defs.CellSize;
+                var startX = (offset.x - bounds.min.x) * Defs.CellSize;
+                var startY = (offset.y - bounds.min.y) * Defs.CellSize;
                 for (int y = startY; y < startY + Defs.CellSize; y++) {
                     for (int x = startX; x < startX + Defs.CellSize; x++) {
                         texture.SetPixel(x, y, Color.white);
@@ -115,22 +133,20 @@ namespace qiekn.core {
             }
             texture.filterMode = FilterMode.Point;
             texture.Apply();
-            var sprite = Sprite.Create(texture,
-                    new Rect(0, 0, texture.width, texture.height),
-                    new Vector2(0, 0));
+            var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), bounds.pivot);
             sprite.name = "background";
             backgroundSR.sprite = sprite;
         }
 
         public void GenerateBorderSprite() {
-            var texture = GenerateTexture();
+            var texture = GenerateTexture(out var bounds);
             var cellSize = Defs.CellSize;
             var borderSize = Defs.BorderSize;
             foreach (var border in borders) {
                 if (border.dir == Vector2Int.up || border.dir == Vector2Int.down) {
-                    Utils.DrawHorizontalBorder(texture, border, cellSize, borderSize);
+                    Utils.DrawHorizontalBorder(texture, border, -bounds.min);
                 } else if (border.dir == Vector2Int.left || border.dir == Vector2Int.right) {
-                    Utils.DrawVerticalBorder(texture, border, cellSize, borderSize);
+                    Utils.DrawVerticalBorder(texture, border, -bounds.min);
                 }
             }
 
@@ -164,11 +180,26 @@ namespace qiekn.core {
 
             texture.filterMode = FilterMode.Point;
             texture.Apply();
-            var sprite = Sprite.Create(texture,
-                    new Rect(0, 0, texture.width, texture.height),
-                    new Vector2(0, 0));
+            var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), bounds.pivot);
             sprite.name = "borders";
             BorderSR.sprite = sprite;
+        }
+
+        public void Register() {
+            gm.RegisterCrate(this);
+            registered = true;
+        }
+
+        public void UnRegister() {
+            gm.UnRegisterCrate(this);
+            registered = false;
+        }
+
+        public void Destory() {
+            if (registered) {
+                UnRegister();
+            }
+            Destroy(gameObject);
         }
 
         /*─────────────────────────────────────┐
@@ -194,13 +225,14 @@ namespace qiekn.core {
         }
 
         private void Move(Vector2Int dir) {
-            // maintain
+            /* TODO: Move System <2025-04-01 03:13, @qiekn> */
             gm.UnRegisterCrate(this);
             position += dir;
+            transform.position = gm.CellToWorld(position); // move
             gm.RegisterCrate(this);
+
             HeatSystem.Instance.Register(gm.GetAdjacent<ITemperature>(this));
-            // move
-            transform.position = gm.CellToWorld(position);
+            MergeSystem.Instance.KissKiss(gm.GetAdjacent<Crate>(this, AdjacentFilter.StickyCrate), this);
         }
 
         /*─────────────────────────────────────┐

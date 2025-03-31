@@ -11,7 +11,6 @@ namespace qiekn.editor {
 
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Update Sprites")) {
-                obj.InitBorders();
                 obj.UpdateSprites();
             }
             if (GUILayout.Button("Update Color")) { obj.UpdateColor(); }
