@@ -1,6 +1,6 @@
 # Hello MXW Demon
 > This project is just for programming practice.  
-> [Bug Maxwell's Puzzling Demon on Steam](https://store.steampowered.com/app/2770160/Maxwells_puzzling_demon/)
+> [Buy Maxwell's Puzzling Demon on Steam](https://store.steampowered.com/app/2770160/Maxwells_puzzling_demon/)
 
 [change log](https://github.com/qiekn/maxwell-puzzling-demon/blob/main/CHANGELOG.md)
 
