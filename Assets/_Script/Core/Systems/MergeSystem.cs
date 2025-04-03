@@ -49,6 +49,7 @@ namespace qiekn.core {
                 // submit
                 lover.Destory();
                 me.Register();
+                me.DisableInnerPairedStickyBorders();
                 me.UpdateSprites();
             }
         }

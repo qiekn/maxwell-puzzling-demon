@@ -7,8 +7,14 @@ namespace qiekn.core {
 
         public static void DrawHorizontalBorder(Texture2D texture, Border border, Vector2Int offset) {
             var color = Color.white;
-            if (border.type == BorderType.shield) {
-                color = Defs.DARKGRAY;
+            switch (border.type) {
+                case BorderType.shield:
+                    color = Defs.DARKGRAY;
+                    break;
+                case BorderType.none:
+                    return;
+                default:
+                    break;
             }
 
             var cellSize = Defs.CellSize;
@@ -43,8 +49,14 @@ namespace qiekn.core {
 
         public static void DrawVerticalBorder(Texture2D texture, Border border, Vector2Int offset) {
             var color = Color.white;
-            if (border.type == BorderType.shield) {
-                color = Defs.DARKGRAY;
+            switch (border.type) {
+                case BorderType.shield:
+                    color = Defs.DARKGRAY;
+                    break;
+                case BorderType.none:
+                    return;
+                default:
+                    break;
             }
             var cellSize = Defs.CellSize;
             var borderSize = Defs.BorderSize;

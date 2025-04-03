@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace qiekn.core {
     public enum AdjacentFilter {
         None,
         StickyCrate,
+        Temperature,
     }
 
     public class GridManager : MonoBehaviour {
@@ -77,13 +79,14 @@ namespace qiekn.core {
         // adjacent crates should be unique
         // however, we do not check for duplicates with the given position
         // used by player Move()
-        public HashSet<T> GetAdjacent<T>(Vector2Int pos) where T : class {
+        public HashSet<T> GetAdjacent<T>(Vector2Int pos, AdjacentFilter filter = AdjacentFilter.None) where T : class {
             var set = new HashSet<T>();
             foreach (var dir in Defs.directions) {
                 var dest = pos + dir;
                 if (GetCrate(dest, out var adjacent) && adjacent is T type) {
                     // feat: heat shield
-                    if (typeof(ITemperature).IsAssignableFrom(typeof(T)) &&
+                    if (filter == AdjacentFilter.Temperature &&
+                            typeof(ITemperature).IsAssignableFrom(typeof(T)) &&
                             adjacent.units[dest - adjacent.position].borders[-dir].type == BorderType.shield) {
                         continue;
                     }
@@ -103,18 +106,22 @@ namespace qiekn.core {
                     if (GetCrate(dest, out var adjacent) && // get neighbor crate
                             adjacent != crate && // deduplicate
                             adjacent is T type) { // convert to T
+                        Debug.Log("check unit: " + pos + ", dir " + dir);
                         // feat: heat shield
-                        if (typeof(ITemperature).IsAssignableFrom(typeof(T)) &&
+                        if (filter == AdjacentFilter.Temperature &&
+                                typeof(ITemperature).IsAssignableFrom(typeof(T)) && (
                                 crate.units[offset].borders[dir].type == BorderType.shield || // check myself heat shield
-                                adjacent.units[dest - adjacent.position].borders[-dir].type == BorderType.shield) { // check neighbor's heat shield
+                                adjacent.units[dest - adjacent.position].borders[-dir].type == BorderType.shield)) { // check neighbor's heat shield
                             continue;
                         }
                         // feat: sticky border
-                        else if (filter == AdjacentFilter.StickyCrate &&
-                                crate.units[offset].borders[dir].type == BorderType.sticky ||
-                                adjacent.units[dest - adjacent.position].borders[-dir].type == BorderType.sticky) {
-                            set.Add(type);
-                            continue;
+                        else if (filter == AdjacentFilter.StickyCrate) {
+                            Debug.Log("sticky border: check neighbor: " + adjacent.position);
+                            if (crate.units[offset].borders[dir].type == BorderType.sticky ||
+                                    adjacent.units[dest - adjacent.position].borders[-dir].type == BorderType.sticky) {
+                                set.Add(type);
+                                continue;
+                            }
                         }
                         // normal: get crate
                         else {

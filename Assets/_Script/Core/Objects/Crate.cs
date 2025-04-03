@@ -66,6 +66,25 @@ namespace qiekn.core {
             }
         }
 
+        public void DisableInnerPairedStickyBorders() {
+            var map = new Dictionary<Vector2Int, Vector2Int>();
+            foreach (var pos in offsets) {
+                foreach (var dir in Defs.directions) {
+                    var dest = pos + dir;
+                    // disable when two sticky border stay together
+                    if (units.ContainsKey(pos + dir) &&
+                            units[pos].borders[dir].type == BorderType.sticky &&
+                            units[dest].borders[-dir].type == BorderType.sticky) {
+                        units[pos].borders[dir].type = BorderType.none;
+                        units[dest].borders[-dir].type = BorderType.none;
+                        map[pos] = dir;
+                        map[dest] = -dir;
+                    }
+                }
+            }
+            borders.RemoveAll(border => map.ContainsKey(border.pos) && border.dir == map[border.pos]);
+        }
+
         /*─────────────────────────────────────┐
         │               Renderer               │
         └──────────────────────────────────────*/

@@ -66,6 +66,7 @@ namespace qiekn.core {
             transform.position = gm.CellToWorld(dest) + Defs.playerOffset;
             temperature = Temperature.Neutral;
             HeatSystem.Instance.Register(this);
+            UpdateColor();
 
             // every time player moved
             // update game state
