@@ -13,7 +13,7 @@ namespace qiekn.core {
 
     [Serializable]
     public class Border {
-        public Vector2Int pos;
+        public Vector2Int pos; // relative position
         public Vector2Int dir;
         public BorderType type;
 

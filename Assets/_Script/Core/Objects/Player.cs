@@ -8,12 +8,14 @@ namespace qiekn.core {
         [SerializeField] SpriteRenderer decorationSpriteRenderer;
         [SerializeField] Vector2Int position;
         [SerializeField] Temperature temperature;
-        HeatSystem hm;
+
         GridManager gm;
+
+        public GridManager GM => gm;
+        public Vector2Int Position => position;
 
         void Start() {
             gm = FindFirstObjectByType<GridManager>().GetComponent<GridManager>();
-            hm = HeatSystem.Instance;
             temperature = Temperature.Neutral;
         }
 
@@ -40,35 +42,34 @@ namespace qiekn.core {
             }
         }
 
-
         // handle collision detection
         bool TryMove(Vector2Int dir) {
             var dest = position + dir;
-            // no obsticle
+            // no obsticle, just move
             if (!gm.IsCrateCellOccupied(dest)) {
                 Move(dest);
                 return true;
             }
-            Debug.Log("player move: try push other");
-            // can push others
+            // try push others
             var other = gm.GetMovable(dest);
             if (gm.CanMove(dir, other)) {
                 other.BePushed(dir);
                 Move(dest);
                 return true;
             }
-            Debug.Log("player move: can't push other");
+            // can't push others
             return false;
         }
 
-        // handle move vfx, teleportation or movement animations
         void Move(Vector2Int dest) {
             position = dest;
             transform.position = gm.CellToWorld(dest) + Defs.playerOffset;
             temperature = Temperature.Neutral;
-            hm.Register(this);
-            hm.Register(gm.GetAdjacent<ITemperature>(position));
-            hm.Balance();
+            HeatSystem.Instance.Register(this);
+
+            // every time player moved
+            // update game state
+            GameManager.Instance.UpdateGame();
         }
 
         void Turn(bool left) {

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace qiekn.core {
@@ -10,7 +8,7 @@ namespace qiekn.core {
         public static void DrawHorizontalBorder(Texture2D texture, Border border, Vector2Int offset) {
             var color = Color.white;
             if (border.type == BorderType.shield) {
-                color = Color.black;
+                color = Defs.DARKGRAY;
             }
 
             var cellSize = Defs.CellSize;
@@ -46,7 +44,7 @@ namespace qiekn.core {
         public static void DrawVerticalBorder(Texture2D texture, Border border, Vector2Int offset) {
             var color = Color.white;
             if (border.type == BorderType.shield) {
-                color = Color.black;
+                color = Defs.DARKGRAY;
             }
             var cellSize = Defs.CellSize;
             var borderSize = Defs.BorderSize;
@@ -144,7 +142,6 @@ namespace qiekn.core {
             < 0 => Temperature.Cold,
             _ => Temperature.Neutral
         };
-
 
         public static bool IsGround(Vector3 pos, LayerMask layerMask) {
             var hit = Physics2D.OverlapPoint(pos, layerMask);

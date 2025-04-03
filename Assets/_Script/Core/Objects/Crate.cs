@@ -16,7 +16,7 @@ namespace qiekn.core {
         public List<Vector2Int> offsets; // crate shape
 
         public Dictionary<Vector2Int, Unit> units; // use this info to disable inner border
-        public List<Border> borders; // outline borders
+        public List<Border> borders; // outline borders used for rendering (references)
 
         GridManager gm;
         bool registered = false;
@@ -28,21 +28,24 @@ namespace qiekn.core {
         void Start() {
             gm = FindFirstObjectByType<GridManager>();
             Register();
+            InitBorders();
             UpdateSprites();
             UpdateColor();
         }
 
         #endregion
 
+        public GridManager GM => gm;
+
         // used for level manager
         public void InitCrate(CrateData data) {
             temperature = data.Temperature;
             position = data.Position;
-            offsets = data.Shape;
+            offsets = new List<Vector2Int>(data.Shape);
         }
 
         public void InitBorders() {
-            // generate units
+            // generate units by offset list
             units = new Dictionary<Vector2Int, Unit>();
             foreach (var offset in offsets) {
                 units.Add(offset, new Unit(offset));
@@ -115,7 +118,6 @@ namespace qiekn.core {
         }
 
         public void UpdateSprites() {
-            InitBorders();
             GenerateBackgroundSprite();
             GenerateBorderSprite();
         }
@@ -143,6 +145,7 @@ namespace qiekn.core {
             var cellSize = Defs.CellSize;
             var borderSize = Defs.BorderSize;
             foreach (var border in borders) {
+                // Debug.Log("Generate Border Sprite: " + border.pos);
                 if (border.dir == Vector2Int.up || border.dir == Vector2Int.down) {
                     Utils.DrawHorizontalBorder(texture, border, -bounds.min);
                 } else if (border.dir == Vector2Int.left || border.dir == Vector2Int.right) {
@@ -215,12 +218,10 @@ namespace qiekn.core {
         }
 
         public bool BePushed(Vector2Int dir) {
-            Debug.Log("crate_" + position + " try to pushed to " + (position + dir));
             if (gm.CanMove(dir, this)) {
                 Move(dir);
                 return true;
             }
-            Debug.Log("crate can't be pushed");
             return false;
         }
 
@@ -231,8 +232,8 @@ namespace qiekn.core {
             transform.position = gm.CellToWorld(position); // move
             gm.RegisterCrate(this);
 
-            HeatSystem.Instance.Register(gm.GetAdjacent<ITemperature>(this));
-            MergeSystem.Instance.KissKiss(gm.GetAdjacent<Crate>(this, AdjacentFilter.StickyCrate), this);
+            HeatSystem.Instance.Register(this);
+            MergeSystem.Instance.Register(this);
         }
 
         /*─────────────────────────────────────┐
