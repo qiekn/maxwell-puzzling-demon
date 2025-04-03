@@ -47,23 +47,23 @@ namespace qiekn.core {
             var dest = position + dir;
             // no obsticle, just move
             if (!gm.IsCrateCellOccupied(dest)) {
-                Move(dest);
+                Move(dir);
                 return true;
             }
             // try push others
             var other = gm.GetMovable(dest);
             if (gm.CanMove(dir, other)) {
                 other.BePushed(dir);
-                Move(dest);
+                Move(dir);
                 return true;
             }
             // can't push others
             return false;
         }
 
-        void Move(Vector2Int dest) {
-            position = dest;
-            transform.position = gm.CellToWorld(dest) + Defs.playerOffset;
+        void Move(Vector2Int dir) {
+            position += dir;
+            transform.position = gm.CellToWorld(position) + Defs.playerOffset;
             temperature = Temperature.Neutral;
             HeatSystem.Instance.Register(this);
             UpdateColor();
