@@ -15,4 +15,6 @@ heat shield
 
 ![heat-shield](https://github.com/user-attachments/assets/70ec472c-eee7-432d-8d77-4bfca9034757)
 
+bug: temperature subregion with heat shield error
 
+![20250403-bug](https://github.com/user-attachments/assets/a89e397e-68d3-4e29-8f02-ad5fbda45c7d)
