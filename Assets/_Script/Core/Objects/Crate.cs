@@ -236,23 +236,11 @@ namespace qiekn.core {
             return res;
         }
 
-        public bool BePushed(Vector2Int dir) {
-            if (gm.CanMove(dir, this)) {
-                Move(dir);
-                return true;
-            }
-            return false;
-        }
-
-        private void Move(Vector2Int dir) {
-            /* TODO: Move System <2025-04-01 03:13, @qiekn> */
-            gm.UnRegisterCrate(this);
+        public void Move(Vector2Int dir) {
             position += dir;
             transform.position = gm.CellToWorld(position); // move
-            gm.RegisterCrate(this);
 
             HeatSystem.Instance.Register(this);
-            MergeSystem.Instance.Register(this);
         }
 
         /*─────────────────────────────────────┐

@@ -12,7 +12,6 @@ namespace qiekn.core {
 
         public void UpdateGame() {
             HeatSystem.Instance.Process();
-            MergeSystem.Instance.Process();
         }
     }
 }

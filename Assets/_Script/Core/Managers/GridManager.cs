@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 namespace qiekn.core {
@@ -24,6 +23,7 @@ namespace qiekn.core {
                     Debug.Log("GridManager: You should say thanks.");
                 }
             }
+            MoveSystem.Instance.GM = this;
             crateCells = new Dictionary<Vector2Int, Crate>();
             groundCells = new HashSet<Vector2Int>();
         }
@@ -67,23 +67,24 @@ namespace qiekn.core {
             return crateCells.ContainsKey(position);
         }
 
-        public ITemperature GetTemperature(Vector2Int position) => crateCells[position];
-
-        public IMovable GetMovable(Vector2Int position) => crateCells[position];
-
-        public bool GetCrate(Vector2Int position, out Crate crate) {
-            return crateCells.TryGetValue(position, out crate);
+        public bool Get<T>(Vector2Int pos, out T result) where T : class {
+            if (crateCells.TryGetValue(pos, out Crate crate)) {
+                result = crate as T;
+                return result != null;
+            }
+            result = null;
+            return false;
         }
 
         // return adjacent crates around given position
         // adjacent crates should be unique
         // however, we do not check for duplicates with the given position
-        // used by player Move()
+        // used by player case
         public HashSet<T> GetAdjacent<T>(Vector2Int pos, AdjacentFilter filter = AdjacentFilter.None) where T : class {
             var set = new HashSet<T>();
             foreach (var dir in Defs.directions) {
                 var dest = pos + dir;
-                if (GetCrate(dest, out var adjacent) && adjacent is T type) {
+                if (Get<Crate>(dest, out var adjacent) && adjacent is T type) {
                     // feat: heat shield
                     if (filter == AdjacentFilter.Temperature &&
                             typeof(ITemperature).IsAssignableFrom(typeof(T)) &&
@@ -103,10 +104,9 @@ namespace qiekn.core {
             foreach (var offset in crate.offsets) { // loop crate's units
                 foreach (var dir in Defs.directions) {
                     var dest = pos + offset + dir;
-                    if (GetCrate(dest, out var adjacent) && // get neighbor crate
+                    if (Get<Crate>(dest, out var adjacent) && // get neighbor crate
                             adjacent != crate && // deduplicate
                             adjacent is T type) { // convert to T
-                        Debug.Log("check unit: " + pos + ", dir " + dir);
                         // feat: heat shield
                         if (filter == AdjacentFilter.Temperature &&
                                 typeof(ITemperature).IsAssignableFrom(typeof(T)) && (
@@ -131,27 +131,6 @@ namespace qiekn.core {
                 }
             }
             return set;
-        }
-
-        /*─────────────────────────────────────┐
-        │               Physics                │
-        └──────────────────────────────────────*/
-
-        public bool CanMove(Vector2Int dir, IMovable obj) {
-            foreach (var pos in obj.GetUnitsPosition()) {
-                var dest = pos + dir;
-                if (IsObstacle(dest)) {
-                    Debug.Log("GridSystem: hit obstacle");
-                    return false;
-                }
-                if (IsCrateCellOccupied(dest) && GetMovable(dest) != GetMovable(pos)) {
-                    if (!GetMovable(dest).BePushed(dir)) {
-                        Debug.Log("GridSystem: chain push failed");
-                        return false;
-                    }
-                }
-            }
-            return true;
         }
     }
 }

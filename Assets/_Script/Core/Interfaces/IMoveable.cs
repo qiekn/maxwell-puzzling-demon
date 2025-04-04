@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace qiekn.core {
     public interface IMovable {
-        bool BePushed(Vector2Int dir);
+        void Move(Vector2Int dir);
         List<Vector2Int> GetUnitsPosition();
     }
 }

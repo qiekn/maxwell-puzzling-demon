@@ -42,35 +42,17 @@ namespace qiekn.core {
             }
         }
 
-        // handle collision detection
-        bool TryMove(Vector2Int dir) {
+        public bool TryMove(Vector2Int dir) {
             var dest = position + dir;
-            // no obsticle, just move
-            if (!gm.IsCrateCellOccupied(dest)) {
-                Move(dir);
-                return true;
+            if (gm.IsObstacle(dest)) {
+                return false;
             }
             // try push others
-            var other = gm.GetMovable(dest);
-            if (gm.CanMove(dir, other)) {
-                other.BePushed(dir);
-                Move(dir);
-                return true;
+            if (gm.Get<Crate>(dest, out var other) && !MoveSystem.Instance.TryMove(dir, other)) {
+                return false;
             }
-            // can't push others
-            return false;
-        }
-
-        void Move(Vector2Int dir) {
-            position += dir;
-            transform.position = gm.CellToWorld(position) + Defs.playerOffset;
-            temperature = Temperature.Neutral;
-            HeatSystem.Instance.Register(this);
-            UpdateColor();
-
-            // every time player moved
-            // update game state
-            GameManager.Instance.UpdateGame();
+            Move(dir);
+            return true;
         }
 
         void Turn(bool left) {
@@ -91,8 +73,18 @@ namespace qiekn.core {
             };
         }
 
-        public bool BePushed(Vector2Int dir) {
-            return TryMove(dir);
+        public void Move(Vector2Int dir) {
+            position += dir;
+            transform.position = gm.CellToWorld(position) + Defs.playerOffset;
+
+            // heat system
+            temperature = Temperature.Neutral;
+            HeatSystem.Instance.Register(this);
+            UpdateColor();
+
+            // every time player moved
+            // update game state
+            GameManager.Instance.UpdateGame();
         }
 
         /*─────────────────────────────────────┐
@@ -115,7 +107,6 @@ namespace qiekn.core {
             if (temperature == Temperature.Neutral) {
                 circleSpriteRenderer.color = Defs.MIDGRAY;
             }
-
         }
     }
 }
