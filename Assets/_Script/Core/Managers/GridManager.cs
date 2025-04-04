@@ -6,6 +6,7 @@ namespace qiekn.core {
         None,
         StickyCrate,
         Temperature,
+        Merge,
     }
 
     public class GridManager : MonoBehaviour {
@@ -101,26 +102,30 @@ namespace qiekn.core {
         public HashSet<T> GetAdjacent<T>(Crate crate, AdjacentFilter filter = AdjacentFilter.None) where T : class {
             var set = new HashSet<T>(); // unique adjacent crates
             var pos = crate.position;
-            foreach (var offset in crate.offsets) { // loop crate's units
+            foreach (var offset in crate.offsets) {
                 foreach (var dir in Defs.directions) {
                     var dest = pos + offset + dir;
-                    if (Get<Crate>(dest, out var adjacent) && // get neighbor crate
-                            adjacent != crate && // deduplicate
-                            adjacent is T type) { // convert to T
+                    if (Get<Crate>(dest, out var adjacent) && adjacent != crate && adjacent is T type) {
+                        var crateBorderType = crate.units[offset].borders[dir].type;
+                        var adjacentBorderType = adjacent.units[dest - adjacent.position].borders[-dir].type;
                         // feat: heat shield
                         if (filter == AdjacentFilter.Temperature &&
                                 typeof(ITemperature).IsAssignableFrom(typeof(T)) && (
                                 crate.units[offset].borders[dir].type == BorderType.shield || // check myself heat shield
                                 adjacent.units[dest - adjacent.position].borders[-dir].type == BorderType.shield)) { // check neighbor's heat shield
-                            continue;
                         }
                         // feat: sticky border
                         else if (filter == AdjacentFilter.StickyCrate) {
-                            Debug.Log("sticky border: check neighbor: " + adjacent.position);
-                            if (crate.units[offset].borders[dir].type == BorderType.sticky ||
-                                    adjacent.units[dest - adjacent.position].borders[-dir].type == BorderType.sticky) {
+                            if (crateBorderType == BorderType.sticky || adjacentBorderType == BorderType.sticky) {
                                 set.Add(type);
-                                continue;
+                            }
+                        }
+                        // feat: merge
+                        else if (filter == AdjacentFilter.Merge) {
+                            if ((crateBorderType == BorderType.sticky || adjacentBorderType == BorderType.sticky) &&
+                                    crateBorderType != BorderType.shield &&
+                                    adjacentBorderType != BorderType.shield) {
+                                set.Add(type);
                             }
                         }
                         // normal: get crate

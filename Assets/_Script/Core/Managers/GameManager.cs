@@ -1,4 +1,3 @@
-
 namespace qiekn.core {
     public class GameManager {
         private static GameManager instance;
@@ -12,6 +11,7 @@ namespace qiekn.core {
 
         public void UpdateGame() {
             HeatSystem.Instance.Process();
+            MergeSystem.Instance.Process();
         }
     }
 }

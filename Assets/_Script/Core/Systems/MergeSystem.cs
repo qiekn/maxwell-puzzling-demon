@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace qiekn.core {
     public class MergeSystem {
@@ -19,12 +20,15 @@ namespace qiekn.core {
         public void Process() {
             while (queue.Count > 0) {
                 var crate = queue.Dequeue();
-                KissKiss(crate, crate.GM.GetAdjacent<Crate>(crate, AdjacentFilter.StickyCrate));
+                KissKiss(crate, crate.GM.GetAdjacent<Crate>(crate, AdjacentFilter.Merge));
             }
         }
 
         // merge function
         void KissKiss(Crate me, HashSet<Crate> set) {
+            foreach (var x in set) {
+                Debug.Log("MergeSystem: " + me.position + " merge with " + x.position);
+            }
             foreach (var lover in set) {
                 // private dating
                 lover.UnRegister();

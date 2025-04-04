@@ -241,6 +241,7 @@ namespace qiekn.core {
             transform.position = gm.CellToWorld(position); // move
 
             HeatSystem.Instance.Register(this);
+            MergeSystem.Instance.Register(this);
         }
 
         /*─────────────────────────────────────┐
