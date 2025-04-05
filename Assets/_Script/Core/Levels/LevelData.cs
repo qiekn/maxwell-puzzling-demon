@@ -6,7 +6,7 @@ namespace qiekn.core {
 
   [CreateAssetMenu(fileName = "New Level", menuName = "Level Data", order = 1)]
   public class LevelData : ScriptableObject {
-    public Worlds World;
+    public World World;
     public int LevelIndex;
     public Vector2Int MapSize;
 
@@ -42,5 +42,5 @@ namespace qiekn.core {
     public List<Border> BordersOverride;
   }
 
-  [Serializable] public enum Worlds { w0, w1, w2, w3, w4, w5, w6, w7, w8, w9 }
+  [Serializable] public enum World { w0, w1, w2, w3, w4, w5, w6, w7, w8, w9 }
 }

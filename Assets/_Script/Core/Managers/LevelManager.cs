@@ -13,17 +13,22 @@ namespace qiekn.core {
 
         [SerializeField] GridManager gm;
         [SerializeField] Tilemap groundMap, crateMap, spawnMap, targetMap;
-        [SerializeField] Worlds world;
+        [SerializeField] World world;
         [SerializeField] int levelIndex;
         [SerializeField] List<CrateData> crateDatas;
 
         LevelData level;
         new Camera camera;
+        bool prevLevelExit;
+        int prevLevelIndex;
+        World prevWorld;
         readonly List<GameObject> players = new();
         readonly List<GameObject> crates = new();
 
         void Start() {
             camera = Camera.main;
+            prevLevelIndex = levelIndex;
+            prevWorld = world;
             PlayerEnter();
         }
 
@@ -96,12 +101,18 @@ namespace qiekn.core {
             crates.Clear();
         }
 
-        public void LoadLevel() {
+        public int LoadLevel() {
             level = Resources.Load<LevelData>($"Levels/{world}-{levelIndex}");
             if (level == null) {
                 Debug.LogError($"Level {world}_{levelIndex} does not exist.");
-                return;
+                levelIndex = prevLevelIndex;
+                world = prevWorld;
+                if (prevLevelExit) {
+                    return 1;
+                }
+                return -1;
             }
+            prevLevelExit = true;
             ClearLevel();
             crateDatas = level.CrateDatas; // references
 
@@ -139,6 +150,8 @@ namespace qiekn.core {
                 SetTile(targetMap, tile);
             }
 
+            return 0;
+
             // local func
             void SetRuleTile(Tilemap map, SavedRuleTile tile) => map.SetTile(tile.Position, tile.Tile);
             void SetTile(Tilemap map, SavedTile tile) => map.SetTile(tile.Position, tile.Tile);
@@ -146,7 +159,14 @@ namespace qiekn.core {
 
         public void PlayerEnter() {
             PlayerExit();
-            LoadLevel();
+            int returnCode = LoadLevel();
+            if (returnCode == -1) {
+                return;
+            } else if (returnCode == 1) {
+                // new level doesn't exit
+                // jump back to prev level
+                LoadLevel();
+            }
 
             gm.RegisterGrounds(level.Grounds);
 
@@ -169,8 +189,41 @@ namespace qiekn.core {
         }
 
         public void PlayerExit() {
-            gm.Clear();
             ClearLevel();
+            gm.Clear();
+        }
+
+        // switch level
+
+        public void SwitchToLevelInThisWorld(int index) {
+            prevLevelIndex = index;
+            Debug.Log("Switch to level: " + index);
+            PlayerEnter();
+        }
+
+        public void NextLevelInThisWorld() {
+            SwitchToLevelInThisWorld(levelIndex++);
+        }
+
+        public void PrevLevelInThisWorld() {
+            SwitchToLevelInThisWorld(levelIndex--);
+        }
+
+        // switch world
+
+        public void SwitchToWorld(World world) {
+            prevWorld = this.world;
+            this.world = world;
+            levelIndex = 0;
+            PlayerEnter();
+        }
+
+        public void PrevWorld() {
+            SwitchToWorld(world - 1);
+        }
+
+        public void NextWorld() {
+            SwitchToWorld(world + 1);
         }
     } // class
 
