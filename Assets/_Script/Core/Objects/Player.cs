@@ -13,14 +13,29 @@ namespace qiekn.core {
 
         public GridManager GM => gm;
         public Vector2Int Position => position;
+        [SerializeField] Sprite deadSprite;
+
+        Sprite normalSprite;
+        bool isDead = false;
 
         void Start() {
             gm = FindFirstObjectByType<GridManager>().GetComponent<GridManager>();
+            normalSprite = decorationSpriteRenderer.sprite;
             temperature = Temperature.Neutral;
         }
 
         void Update() {
-            UpdatePlayerInput();
+            if (temperature == Temperature.Hot) {
+                isDead = true;
+                decorationSpriteRenderer.sprite = deadSprite;
+            } else if (isDead && temperature != Temperature.Hot) {
+                isDead = false;
+                decorationSpriteRenderer.sprite = normalSprite;
+            }
+
+            if (!isDead) {
+                UpdatePlayerInput();
+            }
         }
 
         // used for level manager
