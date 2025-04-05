@@ -169,7 +169,7 @@ namespace qiekn.core {
                 // jump back to prev level
                 LoadLevel();
             } else if (returnCode == 0) {
-                levelText.text = $"World {world.ToString().Replace("w", "")} - Level {levelIndex}";
+                levelText.text = $"World {world.ToString().Replace("w", "")} / Level {levelIndex}";
             }
 
             gm.RegisterGrounds(level.Grounds);
