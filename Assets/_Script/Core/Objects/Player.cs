@@ -25,6 +25,7 @@ namespace qiekn.core {
 
         // used for level manager
         public void Init(Vector2Int position_) {
+            name = "player";
             position = position_;
         }
 

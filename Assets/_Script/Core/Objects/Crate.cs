@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 
 namespace qiekn.core {
@@ -28,7 +29,6 @@ namespace qiekn.core {
         void Start() {
             gm = FindFirstObjectByType<GridManager>();
             Register();
-            InitBorders();
             UpdateSprites();
             UpdateColor();
         }
@@ -37,32 +37,49 @@ namespace qiekn.core {
 
         public GridManager GM => gm;
 
-        // used for level manager
+        // used by level manager
         public void InitCrate(CrateData data) {
+            name = "crate_" + data.Position;
             temperature = data.Temperature;
             position = data.Position;
             offsets = new List<Vector2Int>(data.Shape);
-        }
+            borders = new List<Border>(data.BordersOverride);
+            InitUnits();
+            InitBorders();
 
-        public void InitBorders() {
-            // generate units by offset list
-            units = new Dictionary<Vector2Int, Unit>();
-            foreach (var offset in offsets) {
-                units.Add(offset, new Unit(offset));
+            void InitUnits() {
+                // generate units by crate shape
+                units = new Dictionary<Vector2Int, Unit>();
+                foreach (var offset in offsets) {
+                    units.Add(offset, new Unit(offset));
+                }
+                foreach (var border in borders) {
+                    units[border.pos].borders[border.dir] = border;
+                }
             }
-            // generate borders
-            // and also check neighbors for each unit to disable inner border
-            // e.g. if has up direction neighbor, disable up border
-            borders = new List<Border>();
-            foreach (var pos in offsets) {
-                var unit = units[pos];
-                foreach (var dir in Defs.directions) {
-                    if (units.ContainsKey(pos + dir)) {
-                        unit.borders[dir].type = BorderType.none;
-                    } else {
-                        borders.Add(unit.borders[dir]);
+
+            void InitBorders() {
+                // gather outer borders
+                // check neighbor units and disable inner border
+                // e.g. if has up direction neighbor, disable up border
+                foreach (var pos in offsets) {
+                    var unit = units[pos];
+                    foreach (var dir in Defs.directions) {
+                        // if not default type, this border is a override border, skip
+                        if (unit.borders[dir].type != BorderType.conductive) {
+                            continue;
+                        }
+                        // disable inner border
+                        else if (units.ContainsKey(pos + dir)) {
+                            unit.borders[dir].type = BorderType.none;
+                        }
+                        // normal case
+                        else {
+                            borders.Add(unit.borders[dir]);
+                        }
                     }
                 }
+
             }
         }
 

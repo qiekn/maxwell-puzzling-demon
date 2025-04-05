@@ -50,6 +50,11 @@ namespace qiekn.core {
             }
         }
 
+        public void Reset() {
+            crateCells.Clear();
+            groundCells.Clear();
+        }
+
         /*─────────────────────────────────────┐
         │             Info Provide             │
         └──────────────────────────────────────*/

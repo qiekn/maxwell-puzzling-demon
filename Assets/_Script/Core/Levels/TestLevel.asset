@@ -12,27 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e15b410417eb848e5a14bd0840f2ed04, type: 3}
   m_Name: TestLevel
   m_EditorClassIdentifier: 
-  LevelName: TestLevel
-  LevelSize: {x: 8, y: 5}
-  SpawnPoints: {x: 5, y: 1}
-  Crates:
-  - Temperature: -1
-    Position: {x: 0, y: 0}
-    Shape:
-    - {x: 0, y: 0}
-    - {x: 0, y: 1}
-    - {x: 0, y: 2}
-  - Temperature: 1
-    Position: {x: 6, y: 0}
-    Shape:
-    - {x: 0, y: 0}
-  - Temperature: 1
-    Position: {x: 7, y: 1}
-    Shape:
-    - {x: 0, y: 0}
-  - Temperature: 0
-    Position: {x: 3, y: 1}
-    Shape:
-    - {x: 0, y: 0}
+  World: 0
+  LevelIndex: 0
+  MapSize: {x: 0, y: 0}
+  GroundTiles: []
+  SpawnPoints:
+  - {x: 0, y: 3}
+  - {x: 1, y: 3}
   Targets:
   - {x: 7, y: 4}
+  CrateDatas: []
