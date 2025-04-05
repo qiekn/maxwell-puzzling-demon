@@ -22,5 +22,9 @@ namespace qiekn.core {
             dir = dir_;
             type = type_;
         }
+
+        public Border DeepCopy() {
+            return new Border(pos, dir, type);
+        }
     }
 }

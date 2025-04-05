@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Data;
+using System.Linq;
 using UnityEngine;
 
 namespace qiekn.core {
@@ -43,7 +43,7 @@ namespace qiekn.core {
             temperature = data.Temperature;
             position = data.Position;
             offsets = new List<Vector2Int>(data.Shape);
-            borders = new List<Border>(data.BordersOverride);
+            borders = data.BordersOverride.Select(b => b.DeepCopy()).ToList();
             InitUnits();
             InitBorders();
 

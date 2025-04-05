@@ -96,7 +96,7 @@ namespace qiekn.core {
             crates.Clear();
         }
 
-        public void EditLevel() {
+        public void LoadLevel() {
             level = Resources.Load<LevelData>($"Levels/{world}-{levelIndex}");
             if (level == null) {
                 Debug.LogError($"Level {world}_{levelIndex} does not exist.");
@@ -145,7 +145,8 @@ namespace qiekn.core {
         }
 
         public void PlayerEnter() {
-            EditLevel();
+            PlayerExit();
+            LoadLevel();
 
             // camera
             var center = groundMap.cellBounds.center;

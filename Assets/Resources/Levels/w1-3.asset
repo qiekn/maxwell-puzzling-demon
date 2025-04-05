@@ -14,8 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   World: 0
   LevelIndex: 3
-  MapSize: {x: 7, y: 5}
+  MapSize: {x: 8, y: 6}
   GroundTiles:
+  - Position: {x: 0, y: -1, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 1, y: -1, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 2, y: -1, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 3, y: -1, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 4, y: -1, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 5, y: -1, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 6, y: -1, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 7, y: -1, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
   - Position: {x: 0, y: 0, z: 0}
     Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
   - Position: {x: 1, y: 0, z: 0}
@@ -29,6 +45,8 @@ MonoBehaviour:
   - Position: {x: 5, y: 0, z: 0}
     Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
   - Position: {x: 6, y: 0, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 7, y: 0, z: 0}
     Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
   - Position: {x: 0, y: 1, z: 0}
     Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
@@ -44,6 +62,8 @@ MonoBehaviour:
     Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
   - Position: {x: 6, y: 1, z: 0}
     Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 7, y: 1, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
   - Position: {x: 0, y: 2, z: 0}
     Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
   - Position: {x: 1, y: 2, z: 0}
@@ -58,17 +78,47 @@ MonoBehaviour:
     Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
   - Position: {x: 6, y: 2, z: 0}
     Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 7, y: 2, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 0, y: 3, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 1, y: 3, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 2, y: 3, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
   - Position: {x: 3, y: 3, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 4, y: 3, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 5, y: 3, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 6, y: 3, z: 0}
+    Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
+  - Position: {x: 7, y: 3, z: 0}
     Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
   - Position: {x: 3, y: 4, z: 0}
     Tile: {fileID: 11400000, guid: c2d9a34cca44649bcb9a2336d32a70a9, type: 2}
   SpawnTiles:
+  - Position: {x: 3, y: -1, z: 0}
+    Tile: {fileID: 11400000, guid: 93d57d3bf4c99490082e3a82c9f2dd5b, type: 2}
   - Position: {x: 1, y: 1, z: 0}
+    Tile: {fileID: 11400000, guid: 93d57d3bf4c99490082e3a82c9f2dd5b, type: 2}
+  - Position: {x: 1, y: 2, z: 0}
+    Tile: {fileID: 11400000, guid: 93d57d3bf4c99490082e3a82c9f2dd5b, type: 2}
+  - Position: {x: 5, y: 2, z: 0}
     Tile: {fileID: 11400000, guid: 93d57d3bf4c99490082e3a82c9f2dd5b, type: 2}
   TargetTiles:
   - Position: {x: 3, y: 4, z: 0}
     Tile: {fileID: 11400000, guid: b7f0df10ce460428bbd30a02d5058e71, type: 2}
   Grounds:
+  - {x: 0, y: -1}
+  - {x: 1, y: -1}
+  - {x: 2, y: -1}
+  - {x: 3, y: -1}
+  - {x: 4, y: -1}
+  - {x: 5, y: -1}
+  - {x: 6, y: -1}
+  - {x: 7, y: -1}
   - {x: 0, y: 0}
   - {x: 1, y: 0}
   - {x: 2, y: 0}
@@ -76,6 +126,7 @@ MonoBehaviour:
   - {x: 4, y: 0}
   - {x: 5, y: 0}
   - {x: 6, y: 0}
+  - {x: 7, y: 0}
   - {x: 0, y: 1}
   - {x: 1, y: 1}
   - {x: 2, y: 1}
@@ -83,6 +134,7 @@ MonoBehaviour:
   - {x: 4, y: 1}
   - {x: 5, y: 1}
   - {x: 6, y: 1}
+  - {x: 7, y: 1}
   - {x: 0, y: 2}
   - {x: 1, y: 2}
   - {x: 2, y: 2}
@@ -90,7 +142,15 @@ MonoBehaviour:
   - {x: 4, y: 2}
   - {x: 5, y: 2}
   - {x: 6, y: 2}
+  - {x: 7, y: 2}
+  - {x: 0, y: 3}
+  - {x: 1, y: 3}
+  - {x: 2, y: 3}
   - {x: 3, y: 3}
+  - {x: 4, y: 3}
+  - {x: 5, y: 3}
+  - {x: 6, y: 3}
+  - {x: 7, y: 3}
   - {x: 3, y: 4}
   CrateDatas:
   - Temperature: 0
@@ -99,6 +159,9 @@ MonoBehaviour:
     - {x: 0, y: 0}
     BordersOverride: []
   Spawns:
+  - {x: 3, y: -1}
   - {x: 1, y: 1}
+  - {x: 1, y: 2}
+  - {x: 5, y: 2}
   Targets:
   - {x: 3, y: 4}

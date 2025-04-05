@@ -12,7 +12,7 @@ namespace qiekn.core {
             GUILayout.BeginHorizontal();
 
             if (GUILayout.Button("Save Level")) { tm.SaveLevel(); }
-            if (GUILayout.Button("Edit Level")) { tm.EditLevel(); }
+            if (GUILayout.Button("Edit Level")) { tm.LoadLevel(); }
             if (GUILayout.Button("Clear Level")) { tm.ClearLevel(); }
 
             GUILayout.EndHorizontal();
