@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace qiekn.core {
     public class InputSystem : MonoBehaviour {
-        [SerializeField] LevelManager lm;
+        LevelManager lm;
 
         void Start() {
             lm = FindFirstObjectByType<LevelManager>().GetComponent<LevelManager>();
