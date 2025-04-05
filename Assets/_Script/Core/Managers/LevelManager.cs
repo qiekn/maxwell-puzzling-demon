@@ -148,6 +148,8 @@ namespace qiekn.core {
             PlayerExit();
             LoadLevel();
 
+            gm.RegisterGrounds(level.Grounds);
+
             // camera
             var center = groundMap.cellBounds.center;
             if (camera == null) {
@@ -167,6 +169,7 @@ namespace qiekn.core {
         }
 
         public void PlayerExit() {
+            gm.Clear();
             ClearLevel();
         }
     } // class

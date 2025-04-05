@@ -50,7 +50,13 @@ namespace qiekn.core {
             }
         }
 
-        public void Reset() {
+        public void RegisterGrounds(List<Vector2Int> grounds) {
+            foreach (var ground in grounds) {
+                groundCells.Add(ground);
+            }
+        }
+
+        public void Clear() {
             crateCells.Clear();
             groundCells.Clear();
         }
@@ -64,9 +70,7 @@ namespace qiekn.core {
         }
 
         public bool IsObstacle(Vector2Int pos) {
-            return false;
-            // to-do
-            // return !groundCells.Contains(pos);
+            return !groundCells.Contains(pos);
         }
 
         public bool IsCrateCellOccupied(Vector2Int position) {
