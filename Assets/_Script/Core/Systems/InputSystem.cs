@@ -6,6 +6,7 @@ namespace qiekn.core {
 
         void Start() {
             lm = FindFirstObjectByType<LevelManager>().GetComponent<LevelManager>();
+            Application.targetFrameRate = 60;
         }
 
         /* TODO: undo system <2025-04-06 01:57, @qiekn> */
