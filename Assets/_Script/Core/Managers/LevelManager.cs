@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -13,6 +14,7 @@ namespace qiekn.core {
 
         [SerializeField] GridManager gm;
         [SerializeField] Tilemap groundMap, crateMap, spawnMap, targetMap;
+        [SerializeField] TextMeshProUGUI levelText;
         [SerializeField] World world;
         [SerializeField] int levelIndex;
         [SerializeField] List<CrateData> crateDatas;
@@ -166,6 +168,8 @@ namespace qiekn.core {
                 // new level doesn't exit
                 // jump back to prev level
                 LoadLevel();
+            } else if (returnCode == 0) {
+                levelText.text = $"World {world.ToString().Replace("w", "")} - Level {levelIndex}";
             }
 
             gm.RegisterGrounds(level.Grounds);
