@@ -3,52 +3,61 @@ using UnityEngine;
 
 namespace qiekn.core {
     public class HeatSystem {
-        readonly HashSet<ITemperature> buffer = new();
-        readonly List<Crate> crates = new();
-
         private static HeatSystem instance;
 
-        public static HeatSystem Instance {
-            get {
-                instance ??= new HeatSystem();
-                return instance;
-            }
+        HashSet<BaseCrate> requesters;
+        HashSet<BaseCrate> buffer; // used for one epoch calculation
+
+        public static HeatSystem Instance => instance ??= new HeatSystem() {
+            requesters = new(),
+            buffer = new(),
+        };
+
+        public void Register(BaseCrate crate) {
+            requesters.Add(crate);
         }
 
-        /* TODO: player as a special crate <2025-04-03 22:04, @qiekn> */
-        public void Register(Player player) {
-            if (player.GM == null) {
-                Debug.Log("gm is null");
-            }
-            player.SetTemperature(Temperature.Neutral);
-            buffer.Add(player);
-            buffer.UnionWith(player.GM.GetAdjacent<ITemperature>(player.Position, AdjacentFilter.Temperature));
-        }
-
-        public void Register(Crate crate) {
-            crates.Add(crate);
-        }
-
-        /* TODO: fix sticky merge <2025-04-03 23:03, @qiekn> */
         public void Process() {
-            // gather
-            foreach (var crate in crates) {
-                buffer.UnionWith(crate.GM.GetAdjacent<ITemperature>(crate, AdjacentFilter.Temperature));
+            Debug.Log("HeatSystem: Starting process");
+            foreach (var crate in requesters) {
+                Debug.Log("HeatSystem: Processing requester " + crate);
+                buffer.Clear();
+                buffer.Add(crate);
+                GatherAdjacentDFS(crate);
+                ApplyTemperature(CalculateHeatSum());
+                Debug.Log("buffer are:");
+                foreach (var x in buffer) {
+                    Debug.Log(x.position);
+                }
             }
-            // calculate heat
-            int res = 0;
-            foreach (var crate in buffer) {
-                res += crate.GetTemperature();
-            }
-            // apply heat
-            var t = Utils.GetTemperature(res);
-            foreach (var crate in buffer) {
-                crate.SetTemperature(t);
-                crate.UpdateColor();
-            }
-            // reset buffers
             buffer.Clear();
-            crates.Clear();
+            requesters.Clear();
+
+            void GatherAdjacentDFS(BaseCrate crate) {
+                var adjacents = crate.GM.GetAdjacent<BaseCrate>(crate, AdjacentFilter.Temperature);
+                foreach (var obj in adjacents) {
+                    if (!buffer.Contains(obj)) {
+                        buffer.Add(obj);
+                        GatherAdjacentDFS(obj);
+                    }
+                }
+            }
+
+            int CalculateHeatSum() {
+                int sum = 0;
+                foreach (var obj in buffer) {
+                    sum += obj.GetTemperature();
+                }
+                return sum;
+            }
+
+            void ApplyTemperature(int heatSum) {
+                var t = Utils.GetTemperature(heatSum);
+                foreach (var obj in buffer) {
+                    obj.SetTemperature(t);
+                    obj.UpdateColor();
+                }
+            }
         }
     }
 }

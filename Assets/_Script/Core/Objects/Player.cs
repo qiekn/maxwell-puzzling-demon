@@ -2,29 +2,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace qiekn.core {
-    public class Player : MonoBehaviour, IMovable, ITemperature {
+    public class Player : BaseCrate {
 
         [SerializeField] SpriteRenderer circleSpriteRenderer;
         [SerializeField] SpriteRenderer decorationSpriteRenderer;
-        [SerializeField] Vector2Int position;
-        [SerializeField] Temperature temperature;
 
-        GridManager gm;
-
-        public GridManager GM => gm;
-        public Vector2Int Position => position;
         [SerializeField] Sprite deadSprite;
 
         Sprite normalSprite;
         bool isDead = false;
 
-        void Start() {
-            gm = FindFirstObjectByType<GridManager>().GetComponent<GridManager>();
+        protected override void Start() {
+            base.Start();
             normalSprite = decorationSpriteRenderer.sprite;
             temperature = Temperature.Neutral;
         }
 
-        void Update() {
+        private void Update() {
             if (temperature == Temperature.Hot) {
                 isDead = true;
                 decorationSpriteRenderer.sprite = deadSprite;
@@ -42,6 +36,14 @@ namespace qiekn.core {
         public void Init(Vector2Int position_) {
             name = "player";
             position = position_;
+            shape = new List<Vector2Int> { new(0, 0) };
+            units = new Dictionary<Vector2Int, Unit> {
+                { Vector2Int.zero, new Unit(Vector2Int.zero, BorderType.none) }
+            };
+            borders = new();
+            foreach (var dir in Defs.directions) {
+                borders.Add(units[Vector2Int.zero].borders[dir]);
+            }
         }
 
         void UpdatePlayerInput() {
@@ -58,17 +60,9 @@ namespace qiekn.core {
             }
         }
 
+
         public bool TryMove(Vector2Int dir) {
-            var dest = position + dir;
-            if (gm.IsObstacle(dest)) {
-                return false;
-            }
-            // try push others
-            if (gm.Get<Crate>(dest, out var other) && !MoveSystem.Instance.TryMove(dir, other)) {
-                return false;
-            }
-            Move(dir);
-            return true;
+            return MoveSystem.Instance.TryMove(dir, this);
         }
 
         void Turn(bool left) {
@@ -79,43 +73,21 @@ namespace qiekn.core {
             }
         }
 
-        /*─────────────────────────────────────┐
-        │          IMovable Interface          │
-        └──────────────────────────────────────*/
-
-        public List<Vector2Int> GetUnitsPosition() {
-            return new List<Vector2Int>{
-                position
-            };
-        }
-
-        public void Move(Vector2Int dir) {
+        public override void Move(Vector2Int dir) {
             position += dir;
             transform.position = gm.CellToWorld(position) + Defs.playerOffset;
 
-            // heat system
-            temperature = Temperature.Neutral;
             HeatSystem.Instance.Register(this);
-            UpdateColor();
-
             // every time player moved
             // update game state
             GameManager.Instance.UpdateGame();
         }
 
-        /*─────────────────────────────────────┐
-        │        ITemperature Interface        │
-        └──────────────────────────────────────*/
-
-        public int GetTemperature() {
-            return (int)temperature;
+        public override int GetTemperature() {
+            return 0;
         }
 
-        public void SetTemperature(Temperature t) {
-            temperature = t;
-        }
-
-        public void UpdateColor() {
+        public override void UpdateColor() {
             Utils.UpdateSpritesColor(circleSpriteRenderer, temperature);
             // temp solution:
             // my demon's gray color is bad,

@@ -20,17 +20,14 @@ namespace qiekn.core {
 
             // merge function
             void KissKiss(Crate me, HashSet<Crate> set) {
-                foreach (var x in set) {
-                    Debug.Log("MergeSystem: " + me.position + " merge with " + x.position);
-                }
                 foreach (var lover in set) {
                     // private dating
                     lover.UnRegister();
                     me.UnRegister();
                     // merge offset & units
-                    foreach (var old_offset in lover.offsets) {
+                    foreach (var old_offset in lover.shape) {
                         var new_offset = lover.position + old_offset - me.position;
-                        me.offsets.Add(new_offset);
+                        me.shape.Add(new_offset);
                         var unit = lover.units[old_offset];
                         unit.position = new_offset;
                         foreach (var pair in unit.borders) {
@@ -43,12 +40,12 @@ namespace qiekn.core {
                         me.borders.Add(border);
                     }
                     // submit
-                    lover.Destory();
+                    lover.Destroy();
                     me.Register();
                     me.DisableInnerPairedStickyBorders();
                     me.UpdateSprites();
                 }
             }
         }
-    }
+    } // class
 }

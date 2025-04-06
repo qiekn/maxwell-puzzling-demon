@@ -95,7 +95,7 @@ namespace qiekn.core {
             }
             foreach (var crate in crates) {
                 if (crate != null) {
-                    crate.GetComponent<Crate>().Destory();
+                    crate.GetComponent<BaseCrate>().Destroy();
                 }
             }
             crateDatas = new();
@@ -134,7 +134,7 @@ namespace qiekn.core {
             // crates
             foreach (var crateData in level.CrateDatas) {
                 var crate = Instantiate(cratePrefab, gm.CellToWorld(crateData.Position), Quaternion.identity);
-                crate.GetComponent<Crate>().InitCrate(crateData);
+                crate.GetComponent<BaseCrate>().InitCrate(crateData);
                 crates.Add(crate);
             }
 
@@ -197,6 +197,7 @@ namespace qiekn.core {
             gm.Clear();
         }
 
+        #region Switch Level
         // switch level
 
         public void SwitchToLevelInThisWorld(int index) {
@@ -229,6 +230,8 @@ namespace qiekn.core {
         public void NextWorld() {
             SwitchToWorld(world + 1);
         }
+
+        #endregion
     } // class
 
 #if UNITY_EDITOR
